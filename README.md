@@ -37,8 +37,22 @@ scram b -j 10
 # PDF variation map may need to be updated
 vi aTGCsAnalysis/TreeMaker/plugins/PDFVariationMap.h
 
+# if running from lpc, the eos fuse mount shouldn't be directly accesed, so the pathname must be changed in the analysis python templates
+cd aTGCsAnalysis/Common/
+vi sedscript.sh
+sh sedscript.sh
+
 # Jobs can be submit and retrieved using python scripts
-cd aTGCsAnalysis/Common/test/
+cd test/
+
+# First, modify the crab template to enter proper storage site and location
+vi templates/template.txt
+
+# setup crab
+source /cvmfs/cms.cern.ch/crab3.sh
+voms-proxy-init -voms cms -valid 192:00
+
+# execute scripts
 python submit_jobs.py
 python retrieve_jobs.py
 
