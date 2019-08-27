@@ -29,7 +29,7 @@ git clone git@github.com:cms-data/RecoEgamma-ElectronIdentification ../external/
 # Only if we want to include L1ECAL pre-firing, include L1ECALPrefiring from https://github.com/lathomas/cmssw/tree/L1Prefiring_8_0_32/L1Prefiring/EventWeightProducer and uncomment the lines in the analysis code afterwards. Copy the input histogram in files directory to aTGCsAnalysis/TreeMaker/data.
 
 # Checkout aTGC analysis code
-git clone -b 80X git@github.com:muhammadansariqbal/aTGCsAnalysis.git
+git clone -b 80X git@github.com:ksiehl/aTGCsAnalysis.git
 
 # Compile
 scram b -j 10
