@@ -8,6 +8,10 @@ Setup Instructions
 ------------------
 
 ```
+#ONLY GAURANTEED TO WORK IN SLC6 AT THE MOMENT
+#make sure the architectrure is correct:
+export SCRAM_ARCH=slc6_amd64_gcc530
+
 # Setup CMSSW
 cmsrel CMSSW_8_0_28
 cd CMSSW_8_0_28/src
