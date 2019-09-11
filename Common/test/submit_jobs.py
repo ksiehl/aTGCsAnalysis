@@ -300,7 +300,7 @@ if __name__ == "__main__":
 	wantToSubmit=False
 	if sys.argv[2] == 'for-real':
 	  print 'we\'re actually submitting this.'
-	  wantToSubmit=False
+	  wantToSubmit=True
 	else:
 	  print 'not actually running.\n'
 	submitJobs(MCBackgroundsSampleDictionary, SignalMCSampleDictionary, DataDictionaryElectronChannel, DataDictionaryMuonChannel, MyJSON,"271036-284044", wantToSubmit)
