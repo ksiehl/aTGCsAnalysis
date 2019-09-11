@@ -10,11 +10,11 @@ config.section_("Data")
 config.Data.inputDataset = '$SAMPLE$'
 config.Data.inputDBS = 'global'
 config.Data.splitting = '$JOBSplitting$'
-config.Data.outLFNDirBase = #enter eos storage location in single quotes
+config.Data.outLFNDirBase = '/eos/user/k/ksiehl/Ansar_Ntuples'
 config.Data.outputDatasetTag = 'dry_run'
 config.Data.unitsPerJob = $UNITSPERJOB$
 $IsData$
 config.Data.publication = False
 config.section_("Site")
 #config.User.voGroup = 'dcms'
-config.Site.storageSite = #enter storage site in single quotes 'T2_DE_DESY'
+config.Site.storageSite = 'T2_CH_CERNBOX'
