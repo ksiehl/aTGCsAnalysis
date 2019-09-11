@@ -56,8 +56,9 @@ vi templates/template.txt
 source /cvmfs/cms.cern.ch/crab3.sh
 voms-proxy-init -voms cms -valid 192:00
 
-# execute scripts
-python submit_jobs.py
+# execute scripts; <name_of_crabjob> should be changed every time it submits to crab;
+# there must always be a second argument; if the second argument is anything other than 'for-real', it will go through a dryrun and not actually submit to crab
+python submit_jobs.py '<name_of_crabjob>' 'for-real'
 python retrieve_jobs.py
 
 # Compile the plotting code

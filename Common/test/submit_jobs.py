@@ -177,7 +177,7 @@ def createFileForJob(processName, channel, sampleName, feature, configFileName, 
 
 
 parser =  optparse.OptionParser()
-parser.add_option('-p', '--Feature', dest="Feature", default='my_feature')
+parser.add_option('-p', '--Feature', dest="Feature", default=str(sys.argv[1]))
 (options, arg) = parser.parse_args()
 
 
@@ -297,5 +297,11 @@ DataDictionaryMuonChannel=collections.OrderedDict(DataDictionaryMuonChannelUnord
 DataDictionaryElectronChannel=collections.OrderedDict(DataDictionaryElectronChannelUnordered)
 
 if __name__ == "__main__":
-	submitJobs(MCBackgroundsSampleDictionary, SignalMCSampleDictionary, DataDictionaryElectronChannel, DataDictionaryMuonChannel, MyJSON,"271036-284044", True)
+	wantToSubmit=False
+	if sys.argv[2] == 'for-real':
+	  print 'we\'re actually submitting this.'
+	  wantToSubmit=False
+	else:
+	  print 'not actually running.\n'
+	submitJobs(MCBackgroundsSampleDictionary, SignalMCSampleDictionary, DataDictionaryElectronChannel, DataDictionaryMuonChannel, MyJSON,"271036-284044", wantToSubmit)
 
