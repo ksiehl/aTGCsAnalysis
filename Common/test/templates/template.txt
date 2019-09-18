@@ -10,7 +10,7 @@ config.section_("Data")
 config.Data.inputDataset = '$SAMPLE$'
 config.Data.inputDBS = 'global'
 config.Data.splitting = '$JOBSplitting$'
-config.Data.outLFNDirBase = '/eos/user/k/ksiehl/Ansar_Ntuples'
+#config.Data.outLFNDirBase = '/eos/user/k/ksiehl/Ansar_Ntuples'
 config.Data.outputDatasetTag = 'dry_run'
 config.Data.unitsPerJob = $UNITSPERJOB$
 $IsData$
