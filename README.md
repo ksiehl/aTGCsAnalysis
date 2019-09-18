@@ -53,7 +53,7 @@ cd test/
 vi templates/template.txt
 
 # setup crab
-source /cvmfs/cms.cern.ch/crab3.sh
+source /cvmfs/cms.cern.ch/crab3/crab.sh
 voms-proxy-init -voms cms -valid 192:00
 
 # execute scripts; <name_of_crabjob> should be changed every time it submits to crab;

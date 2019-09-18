@@ -7,7 +7,7 @@
 for x in `ls analysis_*.py`
 do
 	echo $x
-	#sed 's_file:///eos/_root://cms-xrd-global.cern.ch//eos/_' < $x > file
-	sed 's_#input = cms.untracked.int32(1000) #test_#input = cms.untracked.int32(100) #test_' < $x > file
+	sed 's_file:///eos/_root://cms-xrd-global.cern.ch//eos/_' < $x > file
+	#sed 's_#input = cms.untracked.int32(1000) #test_#input = cms.untracked.int32(100) #test_' < $x > file
 	cp file $x
 done
