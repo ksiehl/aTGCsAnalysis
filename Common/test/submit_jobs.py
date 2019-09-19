@@ -266,7 +266,7 @@ SignalMCSampleDictionaryUnordered =[
 ]
 
 DataDictionaryMuonChannelUnordered = [
-	('data-RunB_ver1','/SingleMuon/Run2016B-03Feb2017_ver1-v1/MINIAOD'),
+	#('data-RunB_ver1','/SingleMuon/Run2016B-03Feb2017_ver1-v1/MINIAOD'),
 	('data-RunB_ver2','/SingleMuon/Run2016B-03Feb2017_ver2-v2/MINIAOD'),
 	('data-RunC','/SingleMuon/Run2016C-03Feb2017-v1/MINIAOD'),
 	('data-RunD','/SingleMuon/Run2016D-03Feb2017-v1/MINIAOD'),
@@ -278,7 +278,7 @@ DataDictionaryMuonChannelUnordered = [
 ]
 
 DataDictionaryElectronChannelUnordered = [
-	('data-RunB_ver1','/SingleElectron/Run2016B-03Feb2017_ver1-v1/MINIAOD'),
+	#('data-RunB_ver1','/SingleElectron/Run2016B-03Feb2017_ver1-v1/MINIAOD'),
 	('data-RunB_ver2','/SingleElectron/Run2016B-03Feb2017_ver2-v2/MINIAOD'),
 	('data-RunC','/SingleElectron/Run2016C-03Feb2017-v1/MINIAOD'),
 	('data-RunD','/SingleElectron/Run2016D-03Feb2017-v1/MINIAOD'),
