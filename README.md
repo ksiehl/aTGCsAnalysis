@@ -61,10 +61,10 @@ voms-proxy-init -voms cms -valid 192:00
 python submit_jobs.py '<name_of_crabjob>' 'for-real'
 
 #check the status of the jobs
-sh status_jobs.sh '<name_of_crabjob>' | tee outputfile
+unbuffer sh status_jobs.sh '<name_of_crabjob>' | tee outputfile
 
-#retrieve
-python retrieve_jobs.py
+#retrieve NO, DON'T RETREIVE. I DON'T LIKE THIS SCRIPT. STAND BY FOR FURTHER INSTRUCTIONS.
+#python retrieve_jobs.py
 
 # Compile the plotting code
 cd aTGCsAnalysis/Common/test/Plotting/
