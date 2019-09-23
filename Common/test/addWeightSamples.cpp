@@ -136,7 +136,7 @@ void addWeight(string FileName, float xsection, float lumi, std::string channel)
 void addWeightSamples()
 {
   double lumi = 35922.;
-  std::string prefix = "/afs/cern.ch/work/m/maiqbal/private/aTGC/Samples_80X_Working/";
+  std::string prefix = "/afs/cern.ch/work/k/ksiehl/public/ansar_project/ntuple_output_storage/";
 
   //electron channel
   addWeight(prefix + "WW_ele.root", 49.997, lumi, "ele");
