@@ -11,6 +11,4 @@ __init__.py
 crab_projects/
 crabConfigs/
 analysisConfigs/
-outputfile
-crablist
 draw
