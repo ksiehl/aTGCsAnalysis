@@ -60,11 +60,15 @@ voms-proxy-init -voms cms -valid 192:00
 # there must always be a second argument; if the second argument is anything other than 'for-real', it will go through a dryrun and not actually submit to crab
 python submit_jobs.py '<name_of_crabjob>' 'for-real'
 
-#check the status of the jobs
+# check the status of the jobs
 unbuffer sh status_jobs.sh '<name_of_crabjob>' | tee outputfile
 
-#retrieve NO, DON'T RETREIVE. I DON'T LIKE THIS SCRIPT. STAND BY FOR FURTHER INSTRUCTIONS.
-#python retrieve_jobs.py
+# I like to choose on a case by case basis what I resubmit, and do it manually, so I don't use the retrieve_jobs.py script
+ls crab_projects/ | grep 'name_of_job' > crablist
+bash get_jobs.sh
+
+# or you can use the retrieve_jobs.py script instead
+python retrieve_jobs.py
 
 # Compile the plotting code
 cd aTGCsAnalysis/Common/test/Plotting/
