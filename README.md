@@ -63,13 +63,13 @@ python submit_jobs.py '<name_of_crabjob>' 'for-real'
 # check the status of the jobs
 unbuffer sh status_jobs.sh '<name_of_crabjob>' | tee outputfile
 
-##### I like to choose on a case by case basis what I resubmit, and do it manually, so I don't use the retrieve_jobs.py script
+# I like to choose on a case by case basis what I resubmit, and do it manually, so I don't run retreive_jobs.py or addExtendedStates.sh
 bash get_jobs.sh 'name_of_crabjob'
+bash rename.sh #you'll need to rename the storage location here
+bash hadd_files.sh #again, rename storage locaton
 
 # or you can use the retrieve jobs script
 python retrieve_jobs.py
-
-# hadd the files together 
 bash addExtendedStats.sh # once again, you'll have to change the source directory
 
 # Compile the plotting code
