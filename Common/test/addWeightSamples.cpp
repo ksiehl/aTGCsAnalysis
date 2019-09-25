@@ -147,12 +147,12 @@ void addWeightSamples()
   addWeight(prefix + "tW-ch-top_ele.root", 35.6, lumi, "ele");
   addWeight(prefix + "tW-ch-antitop_ele.root", 35.6, lumi, "ele");
   addWeight(prefix + "WJets_Ht100To200_ele.root", 1345.0*1.21, lumi, "ele");
-  addWeight(prefix + "WJets_Ht200To400_ele.root", 359.7*1.21, lumi, "ele"); 
-  addWeight(prefix + "WJets_Ht400To600_ele.root", 48.91*1.21, lumi, "ele"); 
-  addWeight(prefix + "WJets_Ht600To800_ele.root", 12.05*1.21, lumi, "ele"); 
+  addWeight(prefix + "WJets_Ht200To400_ele.root", 359.7*1.21, lumi, "ele");
+  addWeight(prefix + "WJets_Ht400To600_ele.root", 48.91*1.21, lumi, "ele");
+  addWeight(prefix + "WJets_Ht600To800_ele.root", 12.05*1.21, lumi, "ele");
   addWeight(prefix + "WJets_Ht800To1200_ele.root", 5.501*1.21, lumi, "ele");
-  addWeight(prefix + "WJets_Ht1200To2500_ele.root", 1.329*1.21, lumi, "ele"); 
-  addWeight(prefix + "WJets_Ht2500ToInf_ele.root", 0.03216*1.21, lumi, "ele"); 
+  addWeight(prefix + "WJets_Ht1200To2500_ele.root", 1.329*1.21, lumi, "ele");
+  addWeight(prefix + "WJets_Ht2500ToInf_ele.root", 0.03216*1.21, lumi, "ele");
   //addWeight(prefix + "ZJets_ele.root", 18.36, lumi, "ele");
   //addWeight(prefix + "WJets_Pt100To250_ele.root", 689.749632, lumi, "ele");
   //addWeight(prefix + "WJets_Pt250To400_ele.root", 24.5069015, lumi, "ele");
@@ -170,16 +170,16 @@ void addWeightSamples()
   addWeight(prefix + "WW_mu.root", 49.997, lumi, "");
   addWeight(prefix + "WZ_mu.root", 11.46, lumi, "");
   addWeight(prefix + "s-ch_mu.root", 10.32*0.33, lumi,"");
-  addWeight(prefix + "t-ch-top_mu.root", 136.02, lumi,""); 
-  addWeight(prefix + "t-ch-antitop_mu.root", 80.95, lumi,""); 
-  addWeight(prefix + "tW-ch-top_mu.root", 35.6, lumi,""); 
-  addWeight(prefix + "tW-ch-antitop_mu.root", 35.6, lumi,""); 
-  addWeight(prefix + "WJets_Ht100To200_mu.root", 1345.0*1.21, lumi,""); 
+  addWeight(prefix + "t-ch-top_mu.root", 136.02, lumi,"");
+  addWeight(prefix + "t-ch-antitop_mu.root", 80.95, lumi,"");
+  addWeight(prefix + "tW-ch-top_mu.root", 35.6, lumi,"");
+  addWeight(prefix + "tW-ch-antitop_mu.root", 35.6, lumi,"");
+  addWeight(prefix + "WJets_Ht100To200_mu.root", 1345.0*1.21, lumi,"");
   addWeight(prefix + "WJets_Ht200To400_mu.root", 359.7*1.21, lumi,"");
   addWeight(prefix + "WJets_Ht400To600_mu.root", 48.91*1.21, lumi,"");
   addWeight(prefix + "WJets_Ht600To800_mu.root", 12.05*1.21, lumi,"");
   addWeight(prefix + "WJets_Ht800To1200_mu.root", 5.501*1.21, lumi,"");
-  addWeight(prefix + "WJets_Ht1200To2500_mu.root", 1.329*1.21, lumi,""); 
+  addWeight(prefix + "WJets_Ht1200To2500_mu.root", 1.329*1.21, lumi,"");
   addWeight(prefix + "WJets_Ht2500ToInf_mu.root", 0.03216*1.21, lumi,"");
   //addWeight(prefix + "ZJets_mu.root", 18.36, lumi, "");
   //addWeight(prefix + "WJets_Pt100To250_mu.root", 689.749632, lumi, "");
@@ -191,7 +191,7 @@ void addWeightSamples()
   // The cross sections are from the GenXSecAnalyzer and multiplying factors are required to match the SM yield to the SM samples.
   addWeight(prefix + "WW-aTGC_MWW-600To800_mu.root", 0.1833 * 2.759, lumi, "");
   addWeight(prefix + "WW-aTGC_MWW-800ToInf_mu.root", 0.2366 * 1.535, lumi, "");
-  addWeight(prefix + "WZ-aTGC_MWZ-600To800_mu.root", 0.06493 * 8.732, lumi, "");  
+  addWeight(prefix + "WZ-aTGC_MWZ-600To800_mu.root", 0.06493 * 8.732, lumi, "");
   addWeight(prefix + "WZ-aTGC_MWZ-800ToInf_mu.root", 0.1012 * 4.341, lumi, "");
 
 }
