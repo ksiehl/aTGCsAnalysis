@@ -64,10 +64,9 @@ python submit_jobs.py '<name_of_crabjob>' 'for-real'
 unbuffer sh status_jobs.sh '<name_of_crabjob>' | tee outputfile
 
 ##### I like to choose on a case by case basis what I resubmit, and do it manually, so I don't use the retrieve_jobs.py script
-####ls crab_projects/ | grep 'name_of_job' > crablist #you will need to modify the output destination in the get_jobs.sh script
-######bash get_jobs.sh
+bash get_jobs.sh 'name_of_crabjob'
 
-# retrieve jobs
+# or you can use the retrieve jobs script
 python retrieve_jobs.py
 
 # hadd the files together 

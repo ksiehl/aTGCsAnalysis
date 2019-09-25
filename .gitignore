@@ -12,3 +12,5 @@ crab_projects/
 crabConfigs/
 analysisConfigs/
 draw
+outputfile
+link
