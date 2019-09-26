@@ -1,6 +1,7 @@
-#/bin/bash 
+#! /bin/bash 
 
-#XXX:if the source command is used, cp will still be aliased to cp -i, and noclobber will still be set
+#NOTE:if this is run with the source command is used instead of with bash, cp will still be aliased to cp -i, and noclobber will still be set, so use bash or execute
+
 #replace file:///eos/
 #with root://cms-xrd-global.cern.ch//eos/
 

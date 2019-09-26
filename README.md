@@ -44,12 +44,14 @@ vi aTGCsAnalysis/TreeMaker/plugins/PDFVariationMap.h
 # if running from lpc, the eos fuse mount shouldn't be directly accesed, so the pathname must be changed in the analysis python templates
 cd aTGCsAnalysis/Common/
 vi sedscript.sh
-sh sedscript.sh
+bash sedscript.sh
 
 # Jobs can be submit and retrieved using python scripts
 cd test/
 
-# First, modify the crab template to enter proper storage site and location
+# First, it may be necesarry to change the config.Site.storeageSite
+# ...as well as possibly uncommenting and setting config.Data.outLFNDirBase
+# Also, if running again, it may be prudent to update config.Data.outputDatasetTag
 vi templates/template.txt
 
 # setup crab
@@ -57,16 +59,18 @@ source /cvmfs/cms.cern.ch/crab3/crab.sh
 voms-proxy-init -voms cms -valid 192:00
 
 # execute scripts; <name_of_crabjob> should be changed every time it submits to crab;
-# there must always be a second argument; if the second argument is anything other than 'for-real', it will go through a dryrun and not actually submit to crab
+# there must always be a second argument; if the second argument is anything other than 'for-real',
+#  it will go through a dryrun and not actually submit to crab
 python submit_jobs.py '<name_of_crabjob>' 'for-real'
 
 # check the status of the jobs
 unbuffer sh status_jobs.sh '<name_of_crabjob>' | tee outputfile
 
-# I like to choose on a case by case basis what I resubmit, and do it manually, so I don't run retreive_jobs.py or addExtendedStates.sh
+# I like to choose on a case by case basis what I resubmit, and do it manually,
+# so I don't run retreive_jobs.py or addExtendedStates.sh
 bash get_jobs.sh 'name_of_crabjob'
-bash rename.sh #you'll need to rename the storage location here
-bash hadd_files.sh #again, rename storage locaton
+bash rename.sh # you'll need to rename the storage location here
+bash hadd_files.sh # again, rename storage locaton
 
 # or you can use the retrieve jobs script
 python retrieve_jobs.py
