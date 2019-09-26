@@ -8,8 +8,8 @@ Setup Instructions
 ------------------
 
 ```
-#ONLY GAURANTEED TO WORK IN SLC6 AT THE MOMENT
-#make sure the architectrure is correct:
+# ONLY GAURANTEED TO WORK IN SLC6 AT THE MOMENT
+# make sure the architectrure is correct:
 export SCRAM_ARCH=slc6_amd64_gcc530
 
 # Setup CMSSW
@@ -41,7 +41,8 @@ scram b -j 10
 # PDF variation map may need to be updated
 vi aTGCsAnalysis/TreeMaker/plugins/PDFVariationMap.h
 
-# if running from lpc, the eos fuse mount shouldn't be directly accesed, so the pathname must be changed in the analysis python templates
+# if running from lpc, the eos fuse mount shouldn't be directly accesed, 
+# so the pathname must be changed in the analysis python templates
 cd aTGCsAnalysis/Common/
 vi sedscript.sh
 bash sedscript.sh
@@ -60,7 +61,7 @@ voms-proxy-init -voms cms -valid 192:00
 
 # execute scripts; <name_of_crabjob> should be changed every time it submits to crab;
 # there must always be a second argument; if the second argument is anything other than 'for-real',
-#  it will go through a dryrun and not actually submit to crab
+# it will go through a dryrun and not actually submit to crab
 python submit_jobs.py '<name_of_crabjob>' 'for-real'
 
 # check the status of the jobs
