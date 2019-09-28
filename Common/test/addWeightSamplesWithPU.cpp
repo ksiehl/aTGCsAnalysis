@@ -295,7 +295,7 @@ void addWeight(string FileName, float xsection, float lumi, std::string channel)
 void addWeightSamplesWithPU()
 {
   double lumi = 35922.;
-  std::string prefix = "/afs/cern.ch/work/m/maiqbal/private/aTGC/Samples_80X_Working/";
+  std::string prefix = "/afs/cern.ch/work/k/ksiehl/public/ansar_project_ntuple_output_storage/";
 
   //electron channel
   addWeight(prefix + "WW_ele.root", 49.997, lumi, "ele");
@@ -305,18 +305,18 @@ void addWeightSamplesWithPU()
   addWeight(prefix + "t-ch-antitop_ele.root", 80.95, lumi, "ele");
   addWeight(prefix + "tW-ch-top_ele.root", 35.6, lumi, "ele");
   addWeight(prefix + "tW-ch-antitop_ele.root", 35.6, lumi, "ele");
-  //addWeight(prefix + "WJets_Ht100To200_ele.root", 1345.0*1.21, lumi, "ele");
-  //addWeight(prefix + "WJets_Ht200To400_ele.root", 359.7*1.21, lumi, "ele"); 
-  //addWeight(prefix + "WJets_Ht400To600_ele.root", 48.91*1.21, lumi, "ele"); 
-  //addWeight(prefix + "WJets_Ht600To800_ele.root", 12.05*1.21, lumi, "ele"); 
-  //addWeight(prefix + "WJets_Ht800To1200_ele.root", 5.501*1.21, lumi, "ele");
-  //addWeight(prefix + "WJets_Ht1200To2500_ele.root", 1.329*1.21, lumi, "ele"); 
-  //addWeight(prefix + "WJets_Ht2500ToInf_ele.root", 0.03216*1.21, lumi, "ele"); 
+  addWeight(prefix + "WJets_Ht100To200_ele.root", 1345.0*1.21, lumi, "ele");
+  addWeight(prefix + "WJets_Ht200To400_ele.root", 359.7*1.21, lumi, "ele"); 
+  addWeight(prefix + "WJets_Ht400To600_ele.root", 48.91*1.21, lumi, "ele"); 
+  addWeight(prefix + "WJets_Ht600To800_ele.root", 12.05*1.21, lumi, "ele"); 
+  addWeight(prefix + "WJets_Ht800To1200_ele.root", 5.501*1.21, lumi, "ele");
+  addWeight(prefix + "WJets_Ht1200To2500_ele.root", 1.329*1.21, lumi, "ele"); 
+  addWeight(prefix + "WJets_Ht2500ToInf_ele.root", 0.03216*1.21, lumi, "ele"); 
   //addWeight(prefix + "ZJets_ele.root", 18.36, lumi, "ele");
-  addWeight(prefix + "WJets_Pt100To250_ele.root", 689.749632, lumi, "ele");
-  addWeight(prefix + "WJets_Pt250To400_ele.root", 24.5069015, lumi, "ele");
-  addWeight(prefix + "WJets_Pt400To600_ele.root", 3.110130566, lumi, "ele");
-  addWeight(prefix + "WJets_Pt600ToInf_ele.root", 0.4683178368, lumi, "ele");
+  //addWeight(prefix + "WJets_Pt100To250_ele.root", 689.749632, lumi, "ele");
+  //addWeight(prefix + "WJets_Pt250To400_ele.root", 24.5069015, lumi, "ele");
+  //addWeight(prefix + "WJets_Pt400To600_ele.root", 3.110130566, lumi, "ele");
+  //addWeight(prefix + "WJets_Pt600ToInf_ele.root", 0.4683178368, lumi, "ele");
   addWeight(prefix + "ttbar_ele.root", 831.76, lumi, "ele");
 
   // The cross sections are from the GenXSecAnalyzer and multiplying factors are required to match the SM yield to the SM samples.
@@ -333,18 +333,18 @@ void addWeightSamplesWithPU()
   addWeight(prefix + "t-ch-antitop_mu.root", 80.95, lumi,""); 
   addWeight(prefix + "tW-ch-top_mu.root", 35.6, lumi,""); 
   addWeight(prefix + "tW-ch-antitop_mu.root", 35.6, lumi,""); 
-  //addWeight(prefix + "WJets_Ht100To200_mu.root", 1345.0*1.21, lumi,""); 
-  //addWeight(prefix + "WJets_Ht200To400_mu.root", 359.7*1.21, lumi,"");
-  //addWeight(prefix + "WJets_Ht400To600_mu.root", 48.91*1.21, lumi,"");
-  //addWeight(prefix + "WJets_Ht600To800_mu.root", 12.05*1.21, lumi,"");
-  //addWeight(prefix + "WJets_Ht800To1200_mu.root", 5.501*1.21, lumi,"");
-  //addWeight(prefix + "WJets_Ht1200To2500_mu.root", 1.329*1.21, lumi,""); 
-  //addWeight(prefix + "WJets_Ht2500ToInf_mu.root", 0.03216*1.21, lumi,"");
+  addWeight(prefix + "WJets_Ht100To200_mu.root", 1345.0*1.21, lumi,""); 
+  addWeight(prefix + "WJets_Ht200To400_mu.root", 359.7*1.21, lumi,"");
+  addWeight(prefix + "WJets_Ht400To600_mu.root", 48.91*1.21, lumi,"");
+  addWeight(prefix + "WJets_Ht600To800_mu.root", 12.05*1.21, lumi,"");
+  addWeight(prefix + "WJets_Ht800To1200_mu.root", 5.501*1.21, lumi,"");
+  addWeight(prefix + "WJets_Ht1200To2500_mu.root", 1.329*1.21, lumi,""); 
+  addWeight(prefix + "WJets_Ht2500ToInf_mu.root", 0.03216*1.21, lumi,"");
   //addWeight(prefix + "ZJets_mu.root", 18.36, lumi, "");
-  addWeight(prefix + "WJets_Pt100To250_mu.root", 689.749632, lumi, "");
-  addWeight(prefix + "WJets_Pt250To400_mu.root", 24.5069015, lumi, "");
-  addWeight(prefix + "WJets_Pt400To600_mu.root", 3.110130566, lumi, "");
-  addWeight(prefix + "WJets_Pt600ToInf_mu.root", 0.4683178368, lumi, "");
+  //addWeight(prefix + "WJets_Pt100To250_mu.root", 689.749632, lumi, "");
+  //addWeight(prefix + "WJets_Pt250To400_mu.root", 24.5069015, lumi, "");
+  //addWeight(prefix + "WJets_Pt400To600_mu.root", 3.110130566, lumi, "");
+  //addWeight(prefix + "WJets_Pt600ToInf_mu.root", 0.4683178368, lumi, "");
   addWeight(prefix + "ttbar_mu.root", 831.76, lumi,"");
 
   // The cross sections are from the GenXSecAnalyzer and multiplying factors are required to match the SM yield to the SM samples.
