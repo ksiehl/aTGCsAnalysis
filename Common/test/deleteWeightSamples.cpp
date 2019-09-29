@@ -15,10 +15,17 @@ void deleteWeightSamples()
 
 	std::string prefix = "/afs/cern.ch/work/m/maiqbal/private/aTGC/Samples_80X_Working/";
 
-	removeTree(prefix + "WJets_Pt100To250_ele.root");
-	removeTree(prefix + "WJets_Pt250To400_ele.root");
-	removeTree(prefix + "WJets_Pt400To600_ele.root");
-	removeTree(prefix + "WJets_Pt600ToInf_ele.root");
+	//removeTree(prefix + "WJets_Pt100To250_ele.root");
+	//removeTree(prefix + "WJets_Pt250To400_ele.root");
+	//removeTree(prefix + "WJets_Pt400To600_ele.root");
+	//removeTree(prefix + "WJets_Pt600ToInf_ele.root");
+	removeTree(prefix + "WJets_Ht100To200_ele.root");
+	removeTree(prefix + "WJets_Ht200To400_ele.root");
+	removeTree(prefix + "WJets_Ht400To600_ele.root");
+	removeTree(prefix + "WJets_Ht600To800_ele.root");
+	removeTree(prefix + "WJets_Ht800To1200_ele.root");
+	removeTree(prefix + "WJets_Ht1200To2500_ele.root");
+	removeTree(prefix + "WJets_Ht2500ToInf_ele.root");
 	removeTree(prefix + "ttbar_ele.root");
 	removeTree(prefix + "WW_ele.root");
 	removeTree(prefix + "WZ_ele.root");
@@ -32,10 +39,17 @@ void deleteWeightSamples()
 	removeTree(prefix + "WZ-aTGC_MWZ-600To800_ele.root");
 	removeTree(prefix + "WZ-aTGC_MWZ-800ToInf_ele.root");
 	
-	removeTree(prefix + "WJets_Pt100To250_mu.root");
-	removeTree(prefix + "WJets_Pt250To400_mu.root");
-	removeTree(prefix + "WJets_Pt400To600_mu.root");
-	removeTree(prefix + "WJets_Pt600ToInf_mu.root");
+	//removeTree(prefix + "WJets_Pt100To250_mu.root");
+	//removeTree(prefix + "WJets_Pt250To400_mu.root");
+	//removeTree(prefix + "WJets_Pt400To600_mu.root");
+	//removeTree(prefix + "WJets_Pt600ToInf_mu.root");
+	removeTree(prefix + "WJets_Ht100To200_mu.root");
+	removeTree(prefix + "WJets_Ht200To400_mu.root");
+	removeTree(prefix + "WJets_Ht400To600_mu.root");
+	removeTree(prefix + "WJets_Ht600To800_mu.root");
+	removeTree(prefix + "WJets_Ht800To1200_mu.root");
+	removeTree(prefix + "WJets_Ht1200To2500_mu.root");
+	removeTree(prefix + "WJets_Ht2500ToInf_mu.root");
 	removeTree(prefix + "ttbar_mu.root");
 	removeTree(prefix + "WW_mu.root");
 	removeTree(prefix + "WZ_mu.root");

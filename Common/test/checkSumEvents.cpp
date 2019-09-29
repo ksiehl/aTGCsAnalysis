@@ -43,7 +43,7 @@ void nEvents(string filename)
 void checkSumEvents()
 {
 
-  std::string prefix = "/afs/cern.ch/work/m/maiqbal/private/aTGC/Samples_80X_Working/";
+  std::string prefix = "/afs/cern.ch/work/k/ksiehl/public/ansar_project/ntuple_output_storage/";
 
   // Electron channel
   /*nEvents(prefix + "WW_ele.root");
