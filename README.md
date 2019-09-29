@@ -86,6 +86,12 @@ vi CMSLumi.cpp
 cd ..
 root -l addWeightSamples.cpp+ # again, here, you will have to modify the input directory to match the output destination of the get_jobs.sh script
 
+# If this step is in some script, I can't find it, and it wasn't in the orignial instructions
+hadd WW-aTGC_mu.root WW-aTGC_MWW-*_mu.root
+hadd WZ-aTGC_mu.root WW-aTGC_MWZ-*_mu.root
+hadd WW-aTGC_ele.root WW-aTGC_MWW-*_ele.root
+hadd WZ-aTGC_ele.root WW-aTGC_MWZ-*_ele.root
+
 # Draw
 cd Plotting
 ./draw <arguments>
