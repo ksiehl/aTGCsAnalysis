@@ -381,6 +381,7 @@ void draw(std::string channel, std::string region, std::string tag, string prefi
 int main(int argc, char* argv[]){
 
 	bool withMC, withData, withSystematics, withSignal, wantToWriteHists;
+	std::string outdir_name;
 	po::options_description desc("Allowed options");
 	desc.add_options()
 	    ("help", "produce help message")
@@ -433,7 +434,9 @@ int main(int argc, char* argv[]){
     if(!vm.count("output")) {
     	//std::cerr << "output tag wasn't specified" << std::endl;
     	//return 0;
+        outdir_name = vm["CR"].as<std::string>() + "_CR";
     }
+    else outdir_name = vm["output"].as<std::string>();
 
     //input directory
     if(!vm.count("input")) {
@@ -461,7 +464,7 @@ int main(int argc, char* argv[]){
     	return 0;
     }
 
-   	draw(vm["channel"].as<std::string>(), vm["CR"].as<std::string>(), vm["CR"].as<std::string>() + "_CR", vm["input"].as<std::string>(), withData, withMC, withSystematics, withSignal, wantToWriteHists);
+   	draw(vm["channel"].as<std::string>(), vm["CR"].as<std::string>(), outdir_name, vm["input"].as<std::string>(), withData, withMC, withSystematics, withSignal, wantToWriteHists);
 	//draw(vm["channel"].as<std::string>(), vm["CR"].as<std::string>(), vm["output"].as<std::string>(), vm["input"].as<std::string>(), withData, withMC, withSystematics, withSignal, wantToWriteHists);
 }
 
