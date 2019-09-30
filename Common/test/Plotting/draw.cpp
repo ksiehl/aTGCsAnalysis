@@ -431,8 +431,9 @@ int main(int argc, char* argv[]){
     }
     //tag for the output directory
     if(!vm.count("output")) {
-    	std::cerr << "output tag wasn't specified" << std::endl;
-    	return 0;
+    	//std::cerr << "output tag wasn't specified" << std::endl;
+    	//return 0;
+	vm.count("output") = vm.count("CR") + "_CR";
     }
 
     //input directory

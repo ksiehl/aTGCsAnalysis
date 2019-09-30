@@ -84,7 +84,7 @@ make
 # Add weight samples after putting in right luminosity
 vi CMSLumi.cpp
 cd ..
-root -l addWeightSamples.cpp+ # again, here, you will have to modify the input directory to match the output destination of the get_jobs.sh script
+root -l addWeightSamplesWithPU.cpp+ # again, here, you will have to modify the input directory to match the output destination of the get_jobs.sh script
 
 # If this step is in some script, I can't find it, and it wasn't in the orignial instructions
 hadd WW-aTGC_mu.root WW-aTGC_MWW-*_mu.root
@@ -108,6 +108,10 @@ cd Plotting
   --withSystematics     calculate systematics or not. If not statistical uncertainties are calculated and drawn.
   --wantToWriteHists    to write histograms to the local file
 
+control region values: ttbar, WJets, TTBarEnrichedInclusive, TTBarEnrichedBTagVeto, signal, signalWW, signalWZ
+
 An example below makes plots in the ttbar control region in the electron channel with data, Monte-Carlo, signal and no systematics :
-./draw --CR ttbar --channel ele --output ttbar_CR --input /afs/cern.ch/work/k/ksiehl/public/ansar_project/ntuple_output_storage/ --withSignal --withMC --withData
+./draw --CR ttbar --channel {ele,mu} --output ttbar_CR --input /afs/cern.ch/work/k/ksiehl/public/ansar_project/ntuple_output_storage/ --withSignal --withMC --withData
+
+
 ```
