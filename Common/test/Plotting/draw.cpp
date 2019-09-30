@@ -433,7 +433,7 @@ int main(int argc, char* argv[]){
     if(!vm.count("output")) {
     	//std::cerr << "output tag wasn't specified" << std::endl;
     	//return 0;
-	vm.count("output") = vm.count("CR") + "_CR";
+	vm.count("output") = vm["CR"].as<std::string>() + "_CR";
     }
 
     //input directory
