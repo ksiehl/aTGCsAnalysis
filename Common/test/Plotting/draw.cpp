@@ -433,7 +433,6 @@ int main(int argc, char* argv[]){
     if(!vm.count("output")) {
     	//std::cerr << "output tag wasn't specified" << std::endl;
     	//return 0;
-	vm.count("output") = vm["CR"].as<std::string>() + "_CR";
     }
 
     //input directory
@@ -462,7 +461,8 @@ int main(int argc, char* argv[]){
     	return 0;
     }
 
-   	draw(vm["channel"].as<std::string>(), vm["CR"].as<std::string>(), vm["output"].as<std::string>(), vm["input"].as<std::string>(), withData, withMC, withSystematics, withSignal, wantToWriteHists);
+   	draw(vm["channel"].as<std::string>(), vm["CR"].as<std::string>(), vm["CR"].as<std::string>() + "_CR", vm["input"].as<std::string>(), withData, withMC, withSystematics, withSignal, wantToWriteHists);
+	//draw(vm["channel"].as<std::string>(), vm["CR"].as<std::string>(), vm["output"].as<std::string>(), vm["input"].as<std::string>(), withData, withMC, withSystematics, withSignal, wantToWriteHists);
 }
 
 
