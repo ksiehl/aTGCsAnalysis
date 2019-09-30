@@ -1,6 +1,6 @@
 #! /bin/bash
 
-WANTHISTS=--WantToWriteHists
+WANTHISTS=--wantToWriteHists
 WITHSYSTEMATICS=--withSystematics
 
 ./draw --CR ttbar --channel ele --input /afs/cern.ch/work/k/ksiehl/public/ansar_project/ntuple_output_storage/ --withSignal --withMC --withData $WANTHISTS $WITHSYSTEMATICS
