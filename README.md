@@ -65,7 +65,7 @@ voms-proxy-init -voms cms -valid 192:00
 python submit_jobs.py '<name_of_crabjob>' 'for-real'
 
 # check the status of the jobs
-unbuffer sh status_jobs.sh '<name_of_crabjob>' | tee outputfile
+unbuffer sh status_jobs.sh '<name_of_crabjob>' | tee outputfile.log
 
 # I like to choose on a case by case basis what I resubmit, and do it manually,
 # so I don't run retreive_jobs.py or addExtendedStates.sh

@@ -8,11 +8,9 @@
 *.root
 *.so
 __init__.py
-*~
 crab_projects/
 crabConfigs/
 analysisConfigs/
 draw
-outputfile
-link
-plots_25ns_*
+*.png
+*.pdf
