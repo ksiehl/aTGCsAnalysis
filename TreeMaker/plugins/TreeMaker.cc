@@ -2910,7 +2910,8 @@ bool TreeMaker::decaysHadronic(const reco::Candidate* p)
   return false;	
 }
 
-void TreeMaker::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup){
+void TreeMaker::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup)
+{
 
 
   edm::Handle<LHERunInfoProduct> run; 
@@ -2926,8 +2927,7 @@ void TreeMaker::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup){
 
 void TreeMaker::endRun(const edm::Run& iRun, const edm::EventSetup& iSetup){}
 // ------------ method called once each job just before starting event loop  ------------
-void 
-TreeMaker::beginJob()
+void TreeMaker::beginJob()
 {
 }
 
