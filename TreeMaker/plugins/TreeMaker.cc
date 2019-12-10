@@ -2411,6 +2411,8 @@ TreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    topPtSF=1.;
    bool topInGen=0, antitopInGen=0;
    double topSF=1., antitopSF=1.;
+   //Double_t gen_neutrino_pz = 0.0;
+   found = 0;
    if(isMC)
      {
        for(unsigned int iGen=0; iGen<genParticles->size(); ++iGen)
