@@ -1719,8 +1719,7 @@ TreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
      {
        // Muon scale factors apply cuts on their nVtx
        int goodNPV = 0;
-       for (const auto & itr : *vertices)
-	 {if (fabs(itr.z()) <= 25 && itr.ndof() > 4 && fabs(itr.position().rho()) <= 2 && !itr.isFake()){goodNPV++;}}
+       for (const auto & itr : *vertices) {if (fabs(itr.z()) <= 25 && itr.ndof() > 4 && fabs(itr.position().rho()) <= 2 && !itr.isFake()){goodNPV++;}}
 
        LeptonSF = MuonScaleFactor_.getScaleFactor(Lepton.pt, std::abs(Lepton.eta), Lepton.phi, goodNPV);
        LeptonSF_Up = MuonScaleFactor_.getScaleFactor(Lepton.pt, std::abs(Lepton.eta), Lepton.phi, goodNPV, "up");
@@ -2227,10 +2226,7 @@ TreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
      {
        for (const auto & itr : *AK4JetsSmearedUp)
 	 {
-	   if (itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") > bTagDiscrCut)
-	     {
-	       nbtag_JERUp++;
-	     }
+	   if (itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") > bTagDiscrCut) {nbtag_JERUp++;}
 	   // std::cout << "Smeared Up " << itr.pt() << " : " << itr.eta() << " : " << itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") << std::endl;
 	 }
 
