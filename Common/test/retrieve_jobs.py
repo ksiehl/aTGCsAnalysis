@@ -35,11 +35,12 @@ def RetrieveTask(taskName, outputFileName, outDir):
  		os.chdir("crab_projects/crab_" + taskName + "/results/")
  		os.system("hadd " + outputFileName + ".root" + "  tree_*.root")
  		os.system("rm tree_*.root")
- 		os.system("mv " + outputFileName + ".root  " +  outDir )
+ 		#os.system("mv " + outputFileName + ".root  " +  outDir )
+		os.system("xrdcp " + outputFileName + ".root " + outDir)
  		os.chdir("../../../")
  		print "\033[0;40;32m task : "  +  taskName +  " retrieved successfully. \033[0m"
  	else :
- 		os.system("crab resubmit -d crab_projects/crab_" + taskName)	
+ 		#os.system("crab resubmit -d crab_projects/crab_" + taskName)	
  		print "\033[0;40;31m task is not retrieved as it's not 100% finished : " + taskName +  "\033[0m"
 
 
@@ -125,4 +126,5 @@ def Retrieval(feature, outDir):
 		RetrieveTask(TaskName + "_ele_" + feature, OutName + "_ele", outDir )
 
 if __name__ == '__main__':
-	Retrieval("my_feature", "/afs/cern.ch/work/m/maiqbal/private/aTGC/Samples_80X_Working/" )
+#	Retrieval("my_feature", "/afs/cern.ch/work/m/maiqbal/private/aTGC/Samples_80X_Working/" )
+	Retrieval("initial_try", "eos prefix + eos directory")

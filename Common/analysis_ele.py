@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 
 process = cms.Process( "aTGCanalysis" )
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(10000000)
+    input = cms.untracked.int32(100)
 )
 
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
@@ -121,7 +121,8 @@ process.analysis = cms.Path(process.NoiseFilters + process.BadChargedCandidateFi
 
 process.source = cms.Source("PoolSource",
     secondaryFileNames = cms.untracked.vstring(),
-    fileNames = cms.untracked.vstring('file:///eos/cms/store/data/Run2016C/SingleElectron/MINIAOD/03Feb2017-v1/100000/0244B3B4-78EB-E611-9D42-0CC47A009E24.root'),
+    fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//eos/cms/store/data/Run2016C/SingleElectron/MINIAOD/03Feb2017-v1/100000/0244B3B4-78EB-E611-9D42-0CC47A009E24.root'),
+    #fileNames = cms.untracked.vstring('file:///eos/cms/store/data/Run2016C/SingleElectron/MINIAOD/03Feb2017-v1/100000/0244B3B4-78EB-E611-9D42-0CC47A009E24.root'),
 )
 
 process.load("FWCore.MessageLogger.MessageLogger_cfi")

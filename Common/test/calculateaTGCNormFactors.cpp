@@ -196,10 +196,11 @@ void calculateFactor(string fileNameSM, double xSecSM,  string fileName600To800,
 
 void calculateaTGCNormFactors()
 {
-	string prefix = "/afs/cern.ch/work/k/ksiehl/public/ansar_project/ntuple_output_storage/";
+	//string prefix = "/afs/cern.ch/work/k/ksiehl/public/ansar_project/ntuple_output_storage/";
+	string prefix = "/uscmst1b_scratch/lpc1/3DayLifetime/ksiehl/preweight/";
 	
-	calculateFactor(prefix+"WW_mu.root", 49.997, prefix+"WW-aTGC_MWW-600To800_mu.root", 0.1833, prefix+"WW-aTGC_MWW-800ToInf_mu.root", 0.2366, "mu");
-	calculateFactor(prefix+"WZ_mu.root", 11.46, prefix+"WZ-aTGC_MWZ-600To800_mu.root", 0.06493, prefix+"WZ-aTGC_MWZ-800ToInf_mu.root", 0.1012, "mu");
-	calculateFactor(prefix+"WW_ele.root", 49.997, prefix+"WW-aTGC_MWW-600To800_ele.root", 0.1833, prefix+"WW-aTGC_MWW-800ToInf_ele.root", 0.2366, "ele");
-	calculateFactor(prefix+"WZ_ele.root", 11.46, prefix+"WZ-aTGC_MWZ-600To800_ele.root", 0.06493, prefix+"WZ-aTGC_MWZ-800ToInf_ele.root", 0.1012, "ele");
+	calculateFactor(prefix+"WW_mu.root", 49.997, prefix+"WW-signal_MWW-600To800_mu.root", 0.1833, prefix+"WW-signal_MWW-800ToInf_mu.root", 0.2366, "mu");
+	calculateFactor(prefix+"WZ_mu.root", 11.46, prefix+"WZ-signal_MWZ-600To800_mu.root", 0.06493, prefix+"WZ-signal_MWZ-800ToInf_mu.root", 0.1012, "mu");
+	calculateFactor(prefix+"WW_ele.root", 49.997, prefix+"WW-signal_MWW-600To800_ele.root", 0.1833, prefix+"WW-signal_MWW-800ToInf_ele.root", 0.2366, "ele");
+	calculateFactor(prefix+"WZ_ele.root", 11.46, prefix+"WZ-signal_MWZ-600To800_ele.root", 0.06493, prefix+"WZ-signal_MWZ-800ToInf_ele.root", 0.1012, "ele");
 }
