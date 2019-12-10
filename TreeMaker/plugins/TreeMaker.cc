@@ -708,9 +708,7 @@ TreeMaker::TreeMaker(const edm::ParameterSet& iConfig):
   bTagDiscrCutLoose(iConfig.getParameter<double>("BtagDiscrCutLoose"))
 {
 
-  if ((channel != "mu") && (channel != "el")) {
-    throw cms::Exception("InvalidValue") << "Invalid value for channel parameter, should be mu or el." << std::endl;
-  }
+  if ((channel != "mu") && (channel != "el")) {throw cms::Exception("InvalidValue") << "Invalid value for channel parameter, should be mu or el." << std::endl;}
 
   // For PUPPI Correction
   edm::FileInPath puppiCorr("aTGCsAnalysis/TreeMaker/data/puppiCorrSummer16.root");
@@ -720,35 +718,36 @@ TreeMaker::TreeMaker(const edm::ParameterSet& iConfig):
   puppisd_corrRECO_for = (TF1*)file->Get("puppiJECcorr_reco_1v3eta2v5");
 
   //loading PU and generator information for MC
-   if (isMC) {
-     SystematicsHelper_  = SystematicsHelper(channel, consumesCollector());
+   if (isMC)
+     {
+       SystematicsHelper_  = SystematicsHelper(channel, consumesCollector());
 
-    // Use the AK8 jet label as basis
-    fatJetsSmearedUpToken_ = consumes<edm::View<pat::Jet>>(edm::InputTag(iConfig.getParameter<edm::InputTag>("fatJetSrc").label() + "SmearedUp"));
-    fatJetsSmearedDownToken_ = consumes<edm::View<pat::Jet>>(edm::InputTag(iConfig.getParameter<edm::InputTag>("fatJetSrc").label() + "SmearedDown"));
+       // Use the AK8 jet label as basis
+       fatJetsSmearedUpToken_ = consumes<edm::View<pat::Jet>>(edm::InputTag(iConfig.getParameter<edm::InputTag>("fatJetSrc").label() + "SmearedUp"));
+       fatJetsSmearedDownToken_ = consumes<edm::View<pat::Jet>>(edm::InputTag(iConfig.getParameter<edm::InputTag>("fatJetSrc").label() + "SmearedDown"));
 
-    // Use the AK4 jet label as basis
-    AK4JetsSmearedUpToken_ = consumes<edm::View<pat::Jet>>(edm::InputTag(iConfig.getParameter<edm::InputTag>("AK4JetSrc").label() + "SmearedUp"));
-    AK4JetsSmearedDownToken_ = consumes<edm::View<pat::Jet>>(edm::InputTag(iConfig.getParameter<edm::InputTag>("AK4JetSrc").label() + "SmearedDown"));
+       // Use the AK4 jet label as basis
+       AK4JetsSmearedUpToken_ = consumes<edm::View<pat::Jet>>(edm::InputTag(iConfig.getParameter<edm::InputTag>("AK4JetSrc").label() + "SmearedUp"));
+       AK4JetsSmearedDownToken_ = consumes<edm::View<pat::Jet>>(edm::InputTag(iConfig.getParameter<edm::InputTag>("AK4JetSrc").label() + "SmearedDown"));
 
-    AK4JetsShiftedUpToken_ = consumes<edm::View<pat::Jet>>(edm::InputTag(iConfig.getParameter<edm::InputTag>("AK4JetSrc").label() + "ShiftedUp"));
-    AK4JetsShiftedDownToken_ = consumes<edm::View<pat::Jet>>(edm::InputTag(iConfig.getParameter<edm::InputTag>("AK4JetSrc").label() + "ShiftedDown"));
+       AK4JetsShiftedUpToken_ = consumes<edm::View<pat::Jet>>(edm::InputTag(iConfig.getParameter<edm::InputTag>("AK4JetSrc").label() + "ShiftedUp"));
+       AK4JetsShiftedDownToken_ = consumes<edm::View<pat::Jet>>(edm::InputTag(iConfig.getParameter<edm::InputTag>("AK4JetSrc").label() + "ShiftedDown"));
 
-     PUInfoToken_ = consumes<std::vector< PileupSummaryInfo > >(iConfig.getParameter<edm::InputTag>("PUInfo"));
+       PUInfoToken_ = consumes<std::vector< PileupSummaryInfo > >(iConfig.getParameter<edm::InputTag>("PUInfo"));
 
-     //PU-reweighting
-     LumiWeights_ = edm::LumiReWeighting(MC_dist(), data_dist());
+       //PU-reweighting
+       LumiWeights_ = edm::LumiReWeighting(MC_dist(), data_dist());
 
-    genInfoToken = mayConsume<GenEventInfoProduct> (iConfig.getParameter<edm::InputTag>( "genInfo" ) );
-    LHEEventProductTokenExternal = mayConsume<LHEEventProduct> (iConfig.getParameter<edm::InputTag>( "LHEEventProductSrcExternal" ) );
-    if(!isSignal)lheProducerToken = consumes< LHERunInfoProduct, edm::InRun >(edm::InputTag("externalLHEProducer"));
-    else lheProducerToken = consumes< LHERunInfoProduct, edm::InRun >(edm::InputTag("externalLHEProducer"));
-    VTagSF = iConfig.getParameter<double>("VTagSF");
+       genInfoToken = mayConsume<GenEventInfoProduct> (iConfig.getParameter<edm::InputTag>( "genInfo" ) );
+       LHEEventProductTokenExternal = mayConsume<LHEEventProduct> (iConfig.getParameter<edm::InputTag>( "LHEEventProductSrcExternal" ) );
+       if(!isSignal)lheProducerToken = consumes< LHERunInfoProduct, edm::InRun >(edm::InputTag("externalLHEProducer"));
+       else lheProducerToken = consumes< LHERunInfoProduct, edm::InRun >(edm::InputTag("externalLHEProducer"));
+       VTagSF = iConfig.getParameter<double>("VTagSF");
 
-    // L1 Prefiring weights
-    //prefweight_token = consumes< double >(edm::InputTag("prefiringweight:NonPrefiringProb"));
+       // L1 Prefiring weights
+       //prefweight_token = consumes< double >(edm::InputTag("prefiringweight:NonPrefiringProb"));
 
-   }
+     }
 
    jecUnc = nullptr;
 
@@ -828,62 +827,64 @@ TreeMaker::TreeMaker(const edm::ParameterSet& iConfig):
   outTree_->Branch("nPV",	      &nPV,		  "nPV/I"  	       );
   outTree_->Branch("rho",       &rho_,     "rho/D"          );
   //PUweight
-  if (isMC) {
-     outTree_->Branch("gnPV", &gnPV, "gnPV/D");
+  if (isMC)
+    {
+      outTree_->Branch("gnPV", &gnPV, "gnPV/D");
 
-     outTree_->Branch("puweight",       &PUweight,     "puweight/D"          );
-     outTree_->Branch("LeptonSF",       &LeptonSF,     "LeptonSF/D"          );
-     outTree_->Branch("LeptonSF_Up",       &LeptonSF_Up,     "LeptonSF_Up/D"          );
-     outTree_->Branch("LeptonSF_Down",       &LeptonSF_Down,     "LeptonSF_Down/D"          );
-     outTree_->Branch("genweight",       &genWeight,     "genweight/D"          );
-     outTree_->Branch("btagWeight",       &btagWeight,     "btagWeight/D"          );
-     outTree_->Branch("btagWeight_BTagUp",       &btagWeight_BTagUp,     "btagWeight_BTagUp/D"          );
-     outTree_->Branch("btagWeight_BTagDown",       &btagWeight_BTagDown,     "btagWeight_BTagDown/D"          );
-     outTree_->Branch("btagWeight_MistagUp",       &btagWeight_MistagUp,     "btagWeight_MistagUp/D"          );
-     outTree_->Branch("btagWeight_MistagDown",       &btagWeight_MistagDown,     "btagWeight_MistagDown/D"          );
-     outTree_->Branch("topPtSF",       &topPtSF,     "topPtSF/D"          );
-     //total weights: central and systematics
-     outTree_->Branch("totWeight",       &totWeight,     "totWeight/D"          );
+      outTree_->Branch("puweight",       &PUweight,     "puweight/D"          );
+      outTree_->Branch("LeptonSF",       &LeptonSF,     "LeptonSF/D"          );
+      outTree_->Branch("LeptonSF_Up",       &LeptonSF_Up,     "LeptonSF_Up/D"          );
+      outTree_->Branch("LeptonSF_Down",       &LeptonSF_Down,     "LeptonSF_Down/D"          );
+      outTree_->Branch("genweight",       &genWeight,     "genweight/D"          );
+      outTree_->Branch("btagWeight",       &btagWeight,     "btagWeight/D"          );
+      outTree_->Branch("btagWeight_BTagUp",       &btagWeight_BTagUp,     "btagWeight_BTagUp/D"          );
+      outTree_->Branch("btagWeight_BTagDown",       &btagWeight_BTagDown,     "btagWeight_BTagDown/D"          );
+      outTree_->Branch("btagWeight_MistagUp",       &btagWeight_MistagUp,     "btagWeight_MistagUp/D"          );
+      outTree_->Branch("btagWeight_MistagDown",       &btagWeight_MistagDown,     "btagWeight_MistagDown/D"          );
+      outTree_->Branch("topPtSF",       &topPtSF,     "topPtSF/D"          );
+      //total weights: central and systematics
+      outTree_->Branch("totWeight",       &totWeight,     "totWeight/D"          );
      
-     outTree_->Branch("totWeight_BTagUp",       &totWeight_BTagUp,     "totWeight_BTagUp/D"          );
-     outTree_->Branch("totWeight_BTagDown",       &totWeight_BTagDown,     "totWeight_BTagDown/D"          );
+      outTree_->Branch("totWeight_BTagUp",       &totWeight_BTagUp,     "totWeight_BTagUp/D"          );
+      outTree_->Branch("totWeight_BTagDown",       &totWeight_BTagDown,     "totWeight_BTagDown/D"          );
      
-     outTree_->Branch("totWeight_MistagUp",       &totWeight_MistagUp,     "totWeight_MistagUp/D"          );
-     outTree_->Branch("totWeight_MistagDown",       &totWeight_MistagDown,     "totWeight_MistagDown/D"          );
+      outTree_->Branch("totWeight_MistagUp",       &totWeight_MistagUp,     "totWeight_MistagUp/D"          );
+      outTree_->Branch("totWeight_MistagDown",       &totWeight_MistagDown,     "totWeight_MistagDown/D"          );
 
-     outTree_->Branch("totWeight_LeptonIDUp",       &totWeight_LeptonIDUp,     "totWeight_LeptonIDUp/D"          );
-     outTree_->Branch("totWeight_LeptonIDDown",       &totWeight_LeptonIDDown,     "totWeight_LeptonIDDown/D"          );
+      outTree_->Branch("totWeight_LeptonIDUp",       &totWeight_LeptonIDUp,     "totWeight_LeptonIDUp/D"          );
+      outTree_->Branch("totWeight_LeptonIDDown",       &totWeight_LeptonIDDown,     "totWeight_LeptonIDDown/D"          );
 
 
-     //PDF and scale weights: systematics
-     outTree_->Branch("PDFWeights","std::vector<double>",&PDFWeights);
-     outTree_->Branch("ScaleWeights","std::vector<double>",&ScaleWeights);
-     //generator info about the decay of WW
-     outTree_->Branch("WDecayClass",     &WDecayClass,    "WDecayClass/I"      );
-     //generator W info
-     outTree_->Branch("Wplus_gen_pt",     &Wplus_gen_pt,    "Wplus_gen_pt/D"      );
-     outTree_->Branch("Wplus_gen_eta",     &Wplus_gen_eta,    "Wplus_gen_eta/D"      );
-     outTree_->Branch("Wplus_gen_phi",     &Wplus_gen_phi,    "Wplus_gen_phi/D"      );
-     outTree_->Branch("Wplus_gen_mass",     &Wplus_gen_mass,    "Wplus_gen_mass/D"      );
+      //PDF and scale weights: systematics
+      outTree_->Branch("PDFWeights","std::vector<double>",&PDFWeights);
+      outTree_->Branch("ScaleWeights","std::vector<double>",&ScaleWeights);
+      //generator info about the decay of WW
+      outTree_->Branch("WDecayClass",     &WDecayClass,    "WDecayClass/I"      );
+      //generator W info
+      outTree_->Branch("Wplus_gen_pt",     &Wplus_gen_pt,    "Wplus_gen_pt/D"      );
+      outTree_->Branch("Wplus_gen_eta",     &Wplus_gen_eta,    "Wplus_gen_eta/D"      );
+      outTree_->Branch("Wplus_gen_phi",     &Wplus_gen_phi,    "Wplus_gen_phi/D"      );
+      outTree_->Branch("Wplus_gen_mass",     &Wplus_gen_mass,    "Wplus_gen_mass/D"      );
 
-     outTree_->Branch("Wminus_gen_pt",     &Wminus_gen_pt,    "Wminus_gen_pt/D"      );
-     outTree_->Branch("Wminus_gen_eta",     &Wminus_gen_eta,    "Wminus_gen_eta/D"      );
-     outTree_->Branch("Wminus_gen_phi",     &Wminus_gen_phi,    "Wminus_gen_phi/D"      );
-     outTree_->Branch("Wminus_gen_mass",     &Wminus_gen_mass,    "Wminus_gen_mass/D"      );
+      outTree_->Branch("Wminus_gen_pt",     &Wminus_gen_pt,    "Wminus_gen_pt/D"      );
+      outTree_->Branch("Wminus_gen_eta",     &Wminus_gen_eta,    "Wminus_gen_eta/D"      );
+      outTree_->Branch("Wminus_gen_phi",     &Wminus_gen_phi,    "Wminus_gen_phi/D"      );
+      outTree_->Branch("Wminus_gen_mass",     &Wminus_gen_mass,    "Wminus_gen_mass/D"      );
 
-     outTree_->Branch("genPtV", &genPtV, "genPtV/D");
-     outTree_->Branch("genMWV", &genMWV, "genMWV/D");
+      outTree_->Branch("genPtV", &genPtV, "genPtV/D");
+      outTree_->Branch("genMWV", &genMWV, "genMWV/D");
 
-     // Prefiring weight
-     //outTree_->Branch("prefiringWeight", &prefiringWeight, "prefiringWeight/D");
-   };
-  if (channel == "el") {
-    outTree_->Branch("bit_HLT_Ele_27_tight",       &bit_HLT_Ele_27_tight,     "bit_HLT_Ele_27_tight/B"          );
-    outTree_->Branch("bit_HLT_Ele_45",       &bit_HLT_Ele_45,     "bit_HLT_Ele_45/B"          );
-    outTree_->Branch("bit_HLT_Ele_115",       &bit_HLT_Ele_115,     "bit_HLT_Ele_115/B"          );
-    outTree_->Branch("bit_HLT_Photon_175",       &bit_HLT_Photon_175,     "bit_HLT_Photon_175/B"          );
-    outTree_->Branch("bit_HLT_Ele_27_OR_45_OR_115",       &bit_HLT_Ele_27_OR_45_OR_115,     "bit_HLT_Ele_27_OR_45_OR_115/B");
-  }
+      // Prefiring weight
+      //outTree_->Branch("prefiringWeight", &prefiringWeight, "prefiringWeight/D");
+    };
+  if (channel == "el")
+    {
+      outTree_->Branch("bit_HLT_Ele_27_tight",       &bit_HLT_Ele_27_tight,     "bit_HLT_Ele_27_tight/B"          );
+      outTree_->Branch("bit_HLT_Ele_45",       &bit_HLT_Ele_45,     "bit_HLT_Ele_45/B"          );
+      outTree_->Branch("bit_HLT_Ele_115",       &bit_HLT_Ele_115,     "bit_HLT_Ele_115/B"          );
+      outTree_->Branch("bit_HLT_Photon_175",       &bit_HLT_Photon_175,     "bit_HLT_Photon_175/B"          );
+      outTree_->Branch("bit_HLT_Ele_27_OR_45_OR_115",       &bit_HLT_Ele_27_OR_45_OR_115,     "bit_HLT_Ele_27_OR_45_OR_115/B");
+    }
   
   //number of loose leptons
   outTree_->Branch("nLooseEle",      &nLooseEle, 	  "nLooseEle/I"       );
@@ -897,17 +898,19 @@ TreeMaker::TreeMaker(const edm::ParameterSet& iConfig):
   outTree_->Branch("l_eta",	      &Lepton.eta,     "l_eta/D"        	);
   outTree_->Branch("l_phi",	      &Lepton.phi,     "l_phi/D"        	);
   //lepton uncertainties
-  if (isMC) {
-    if(channel == "el"){
-        outTree_->Branch("sc_eta",       &sc_eta,     "sc_eta/D"          );  
-        outTree_->Branch("sc_et",       &sc_et,     "sc_et/D"          );  
-        outTree_->Branch("isEB",       &isEB,     "isEB/B"          );  
+  if (isMC)
+    {
+      if(channel == "el")
+	{
+	  outTree_->Branch("sc_eta",       &sc_eta,     "sc_eta/D"          );  
+	  outTree_->Branch("sc_et",       &sc_et,     "sc_et/D"          );  
+	  outTree_->Branch("isEB",       &isEB,     "isEB/B"          );  
+	}
+      outTree_->Branch("l_pt_LeptonEnUp",       &Lepton.pt_LeptonEnUp,     "l_pt_LeptonEnUp/D"          );
+      outTree_->Branch("l_pt_LeptonEnDown",     &Lepton.pt_LeptonEnDown,   "l_pt_LeptonEnDown/D"          );
+      outTree_->Branch("l_pt_LeptonResUp",      &Lepton.pt_LeptonResUp,    "l_pt_LeptonResUp/D"          );
+      outTree_->Branch("l_pt_LeptonResDown",    &Lepton.pt_LeptonResDown,  "l_pt_LeptonResDown/D"          );
     }
-    outTree_->Branch("l_pt_LeptonEnUp",       &Lepton.pt_LeptonEnUp,     "l_pt_LeptonEnUp/D"          );
-    outTree_->Branch("l_pt_LeptonEnDown",     &Lepton.pt_LeptonEnDown,   "l_pt_LeptonEnDown/D"          );
-    outTree_->Branch("l_pt_LeptonResUp",      &Lepton.pt_LeptonResUp,    "l_pt_LeptonResUp/D"          );
-    outTree_->Branch("l_pt_LeptonResDown",    &Lepton.pt_LeptonResDown,  "l_pt_LeptonResDown/D"          );
-  }
   //W leptonic observables
   outTree_->Branch("W_pt",	      &Wboson_lep.pt,     "W_pt/D"         );
   outTree_->Branch("W_eta",	      &Wboson_lep.eta,    "W_eta/D"        );
@@ -915,47 +918,48 @@ TreeMaker::TreeMaker(const edm::ParameterSet& iConfig):
   outTree_->Branch("W_mass",      &Wboson_lep.mass,   "W_mass/D"       );
   outTree_->Branch("W_mt",	      &Wboson_lep.mt,     "W_mt/D"         );
 
-  if (isMC){
-    //pt
-    outTree_->Branch("W_pt_LeptonEnUp",        &Wboson_lep.pt_LeptonEnUp,     "W_pt_LeptonEnUp/D"         );
-    outTree_->Branch("W_pt_LeptonEnDown",      &Wboson_lep.pt_LeptonEnDown,   "W_pt_LeptonEnDown/D"       );
+  if (isMC)
+    {
+      //pt
+      outTree_->Branch("W_pt_LeptonEnUp",        &Wboson_lep.pt_LeptonEnUp,     "W_pt_LeptonEnUp/D"         );
+      outTree_->Branch("W_pt_LeptonEnDown",      &Wboson_lep.pt_LeptonEnDown,   "W_pt_LeptonEnDown/D"       );
     
-    outTree_->Branch("W_pt_LeptonResUp",        &Wboson_lep.pt_LeptonResUp,     "W_pt_LeptonResUp/D"         );
-    outTree_->Branch("W_pt_LeptonResDown",      &Wboson_lep.pt_LeptonResDown,   "W_pt_LeptonResDown/D"       );
+      outTree_->Branch("W_pt_LeptonResUp",        &Wboson_lep.pt_LeptonResUp,     "W_pt_LeptonResUp/D"         );
+      outTree_->Branch("W_pt_LeptonResDown",      &Wboson_lep.pt_LeptonResDown,   "W_pt_LeptonResDown/D"       );
 
-    outTree_->Branch("W_pt_JECUp",        &Wboson_lep.pt_JECUp,     "W_pt_JECUp/D"         );
-    outTree_->Branch("W_pt_JECDown",      &Wboson_lep.pt_JECDown,   "W_pt_JECDown/D"       );
+      outTree_->Branch("W_pt_JECUp",        &Wboson_lep.pt_JECUp,     "W_pt_JECUp/D"         );
+      outTree_->Branch("W_pt_JECDown",      &Wboson_lep.pt_JECDown,   "W_pt_JECDown/D"       );
 
-    outTree_->Branch("W_pt_UnclEnUp",        &Wboson_lep.pt_UnclEnUp,     "W_pt_UnclEnUp/D"         );
-    outTree_->Branch("W_pt_UnclEnDown",      &Wboson_lep.pt_UnclEnDown,   "W_pt_UnclEnDown/D"       );
+      outTree_->Branch("W_pt_UnclEnUp",        &Wboson_lep.pt_UnclEnUp,     "W_pt_UnclEnUp/D"         );
+      outTree_->Branch("W_pt_UnclEnDown",      &Wboson_lep.pt_UnclEnDown,   "W_pt_UnclEnDown/D"       );
 
-    //mass 
-    outTree_->Branch("W_mass_LeptonEnUp",        &Wboson_lep.mass_LeptonEnUp,     "W_mass_LeptonEnUp/D"         );
-    outTree_->Branch("W_mass_LeptonEnDown",      &Wboson_lep.mass_LeptonEnDown,   "W_mass_LeptonEnDown/D"       );
+      //mass 
+      outTree_->Branch("W_mass_LeptonEnUp",        &Wboson_lep.mass_LeptonEnUp,     "W_mass_LeptonEnUp/D"         );
+      outTree_->Branch("W_mass_LeptonEnDown",      &Wboson_lep.mass_LeptonEnDown,   "W_mass_LeptonEnDown/D"       );
     
-    outTree_->Branch("W_mass_LeptonResUp",        &Wboson_lep.mass_LeptonResUp,     "W_mass_LeptonResUp/D"         );
-    outTree_->Branch("W_mass_LeptonResDown",      &Wboson_lep.mass_LeptonResDown,   "W_mass_LeptonResDown/D"       );
+      outTree_->Branch("W_mass_LeptonResUp",        &Wboson_lep.mass_LeptonResUp,     "W_mass_LeptonResUp/D"         );
+      outTree_->Branch("W_mass_LeptonResDown",      &Wboson_lep.mass_LeptonResDown,   "W_mass_LeptonResDown/D"       );
 
-    outTree_->Branch("W_mass_JECUp",        &Wboson_lep.mass_JECUp,     "W_mass_JECUp/D"         );
-    outTree_->Branch("W_mass_JECDown",      &Wboson_lep.mass_JECDown,   "W_mass_JECDown/D"       );
+      outTree_->Branch("W_mass_JECUp",        &Wboson_lep.mass_JECUp,     "W_mass_JECUp/D"         );
+      outTree_->Branch("W_mass_JECDown",      &Wboson_lep.mass_JECDown,   "W_mass_JECDown/D"       );
 
-    outTree_->Branch("W_mass_UnclEnUp",        &Wboson_lep.mass_UnclEnUp,     "W_mass_UnclEnUp/D"         );
-    outTree_->Branch("W_mass_UnclEnDown",      &Wboson_lep.mass_UnclEnDown,   "W_mass_UnclEnDown/D"       );
+      outTree_->Branch("W_mass_UnclEnUp",        &Wboson_lep.mass_UnclEnUp,     "W_mass_UnclEnUp/D"         );
+      outTree_->Branch("W_mass_UnclEnDown",      &Wboson_lep.mass_UnclEnDown,   "W_mass_UnclEnDown/D"       );
 
-    //mt 
-    outTree_->Branch("W_mt_LeptonEnUp",        &Wboson_lep.mt_LeptonEnUp,     "W_mt_LeptonEnUp/D"         );
-    outTree_->Branch("W_mt_LeptonEnDown",      &Wboson_lep.mt_LeptonEnDown,   "W_mt_LeptonEnDown/D"       );
+      //mt 
+      outTree_->Branch("W_mt_LeptonEnUp",        &Wboson_lep.mt_LeptonEnUp,     "W_mt_LeptonEnUp/D"         );
+      outTree_->Branch("W_mt_LeptonEnDown",      &Wboson_lep.mt_LeptonEnDown,   "W_mt_LeptonEnDown/D"       );
     
-    outTree_->Branch("W_mt_LeptonResUp",        &Wboson_lep.mt_LeptonResUp,     "W_mt_LeptonResUp/D"         );
-    outTree_->Branch("W_mt_LeptonResDown",      &Wboson_lep.mt_LeptonResDown,   "W_mt_LeptonResDown/D"       );
+      outTree_->Branch("W_mt_LeptonResUp",        &Wboson_lep.mt_LeptonResUp,     "W_mt_LeptonResUp/D"         );
+      outTree_->Branch("W_mt_LeptonResDown",      &Wboson_lep.mt_LeptonResDown,   "W_mt_LeptonResDown/D"       );
 
-    outTree_->Branch("W_mt_JECUp",        &Wboson_lep.mt_JECUp,     "W_mt_JECUp/D"         );
-    outTree_->Branch("W_mt_JECDown",      &Wboson_lep.mt_JECDown,   "W_mt_JECDown/D"       );
+      outTree_->Branch("W_mt_JECUp",        &Wboson_lep.mt_JECUp,     "W_mt_JECUp/D"         );
+      outTree_->Branch("W_mt_JECDown",      &Wboson_lep.mt_JECDown,   "W_mt_JECDown/D"       );
 
-    outTree_->Branch("W_mt_UnclEnUp",        &Wboson_lep.mt_UnclEnUp,     "W_mt_UnclEnUp/D"         );
-    outTree_->Branch("W_mt_UnclEnDown",      &Wboson_lep.mt_UnclEnDown,   "W_mt_UnclEnDown/D"       );
+      outTree_->Branch("W_mt_UnclEnUp",        &Wboson_lep.mt_UnclEnUp,     "W_mt_UnclEnUp/D"         );
+      outTree_->Branch("W_mt_UnclEnDown",      &Wboson_lep.mt_UnclEnDown,   "W_mt_UnclEnDown/D"       );
     
-  } 
+    } 
 
   
   outTree_->Branch("charge_W_lep",    &Wboson_lep.charge, "charge_W_lep/D"     );
@@ -970,78 +974,80 @@ TreeMaker::TreeMaker(const edm::ParameterSet& iConfig):
   outTree_->Branch("pfMETPhi",	      &METCand.phi, 	  "pfMETPhi/D"          );
   
 
-  if (isMC) {
-    //MET uncertainties
-    //UnclEn
-    outTree_->Branch("pfMET_UnclEnUp",         &MET_UnclEnUp,    "pfMET_UnclEnUp/D"              );
-    outTree_->Branch("pfMET_UnclEnDown",         &MET_UnclEnDown,    "pfMET_UnclEnDown/D"              );
-    //JER
-    outTree_->Branch("pfMET_JERUp",         &MET_JERUp,    "pfMET_JERUp/D"              );
-    outTree_->Branch("pfMET_JERDown",         &MET_JERDown,    "pfMET_JERDown/D"              );
-    //JEC
-    outTree_->Branch("pfMET_JECUp",         &MET_JECUp,    "pfMET_JECUp/D"              );
-    outTree_->Branch("pfMET_JECDown",         &MET_JECDown,    "pfMET_JECDown/D"              );
-    //Lepton energy energy scale
-    outTree_->Branch("pfMET_LeptonEnUp",         &MET_LeptonEnUp,    "pfMET_LeptonEnUp/D"              );
-    outTree_->Branch("pfMET_LeptonEnDown",         &MET_LeptonEnDown,    "pfMET_LeptonEnDown/D"              );
+  if (isMC)
+    {
+      //MET uncertainties
+      //UnclEn
+      outTree_->Branch("pfMET_UnclEnUp",         &MET_UnclEnUp,    "pfMET_UnclEnUp/D"              );
+      outTree_->Branch("pfMET_UnclEnDown",         &MET_UnclEnDown,    "pfMET_UnclEnDown/D"              );
+      //JER
+      outTree_->Branch("pfMET_JERUp",         &MET_JERUp,    "pfMET_JERUp/D"              );
+      outTree_->Branch("pfMET_JERDown",         &MET_JERDown,    "pfMET_JERDown/D"              );
+      //JEC
+      outTree_->Branch("pfMET_JECUp",         &MET_JECUp,    "pfMET_JECUp/D"              );
+      outTree_->Branch("pfMET_JECDown",         &MET_JECDown,    "pfMET_JECDown/D"              );
+      //Lepton energy energy scale
+      outTree_->Branch("pfMET_LeptonEnUp",         &MET_LeptonEnUp,    "pfMET_LeptonEnUp/D"              );
+      outTree_->Branch("pfMET_LeptonEnDown",         &MET_LeptonEnDown,    "pfMET_LeptonEnDown/D"              );
    
-    //MET phi uncertainties
-    //UnclEn
-    outTree_->Branch("pfMETPhi_UnclEnUp",         &MET_Phi_UnclEnUp,    "pfMETPhi_UnclEnUp/D"              );
-    outTree_->Branch("pfMETPhi_UnclEnDown",         &MET_Phi_UnclEnDown,    "pfMETPhi_UnclEnDown/D"              );
-    //JER
-    outTree_->Branch("pfMETPhi_JERUp",         &MET_Phi_JERUp,    "pfMETPhi_JERUp/D"              );
-    outTree_->Branch("pfMETPhi_JERDown",         &MET_Phi_JERDown,    "pfMETPhi_JERDown/D"              );
-    //JEC
-    outTree_->Branch("pfMETPhi_JECUp",         &MET_Phi_JECUp,    "pfMETPhi_JECUp/D"              );
-    outTree_->Branch("pfMETPhi_JECDown",         &MET_Phi_JECDown,    "pfMETPhi_JECDown/D"              );
-    //Lepton energy scale
-    outTree_->Branch("pfMETPhi_LeptonEnUp",         &MET_Phi_LeptonEnUp,    "pfMETPhi_LeptonEnUp/D"              );
-    outTree_->Branch("pfMETPhi_LeptonEnDown",         &MET_Phi_LeptonEnDown,    "pfMETPhi_LeptonEnDown/D"              );
+      //MET phi uncertainties
+      //UnclEn
+      outTree_->Branch("pfMETPhi_UnclEnUp",         &MET_Phi_UnclEnUp,    "pfMETPhi_UnclEnUp/D"              );
+      outTree_->Branch("pfMETPhi_UnclEnDown",         &MET_Phi_UnclEnDown,    "pfMETPhi_UnclEnDown/D"              );
+      //JER
+      outTree_->Branch("pfMETPhi_JERUp",         &MET_Phi_JERUp,    "pfMETPhi_JERUp/D"              );
+      outTree_->Branch("pfMETPhi_JERDown",         &MET_Phi_JERDown,    "pfMETPhi_JERDown/D"              );
+      //JEC
+      outTree_->Branch("pfMETPhi_JECUp",         &MET_Phi_JECUp,    "pfMETPhi_JECUp/D"              );
+      outTree_->Branch("pfMETPhi_JECDown",         &MET_Phi_JECDown,    "pfMETPhi_JECDown/D"              );
+      //Lepton energy scale
+      outTree_->Branch("pfMETPhi_LeptonEnUp",         &MET_Phi_LeptonEnUp,    "pfMETPhi_LeptonEnUp/D"              );
+      outTree_->Branch("pfMETPhi_LeptonEnDown",         &MET_Phi_LeptonEnDown,    "pfMETPhi_LeptonEnDown/D"              );
    
-  }
+    }
   /// Other observables
   outTree_->Branch("deltaR_LeptonWJet",  &deltaR_LeptonWJet,	  "deltaR_LeptonWJet/D"   );
   outTree_->Branch("deltaPhi_LeptonMet", &deltaPhi_LeptonMet,	  "deltaPhi_LeptonMet/D"  );
   outTree_->Branch("deltaPhi_WJetMet",&deltaPhi_WJetMet,  "deltaPhi_WJetMet/D" );
   outTree_->Branch("deltaPhi_WJetWlep",&deltaPhi_WJetWlep,  "deltaPhi_WJetWlep/D" );
-  if (isMC){
-    //UnclEn
-    outTree_->Branch("deltaPhi_LeptonMet_UnclEnUp", &deltaPhi_LeptonMet_UnclEnUp,   "deltaPhi_LeptonMet_UnclEnUp/D"  );
-    outTree_->Branch("deltaPhi_LeptonMet_UnclEnDown", &deltaPhi_LeptonMet_UnclEnDown,   "deltaPhi_LeptonMet_UnclEnDown/D"  );
-    //JEC
-    outTree_->Branch("deltaPhi_LeptonMet_JECUp", &deltaPhi_LeptonMet_JECUp,   "deltaPhi_LeptonMet_JECUp/D"  );
-    outTree_->Branch("deltaPhi_LeptonMet_JECDown", &deltaPhi_LeptonMet_JECDown,   "deltaPhi_LeptonMet_JECDown/D"  );
-    //Lepton energy scale
-    outTree_->Branch("deltaPhi_LeptonMet_LeptonEnUp", &deltaPhi_LeptonMet_LeptonEnUp,   "deltaPhi_LeptonMet_LeptonEnUp/D"  );
-    outTree_->Branch("deltaPhi_LeptonMet_LeptonEnDown", &deltaPhi_LeptonMet_LeptonEnDown,   "deltaPhi_LeptonMet_LeptonEnDown/D"  );
-    //JER
-    outTree_->Branch("deltaPhi_LeptonMet_JERUp", &deltaPhi_LeptonMet_JERUp,   "deltaPhi_LeptonMet_JERUp/D"  );
-    outTree_->Branch("deltaPhi_LeptonMet_JERDown", &deltaPhi_LeptonMet_JERDown,   "deltaPhi_LeptonMet_LeptonEnDown/D"  );
-    /////////////////////
-    //UnclEn
-    outTree_->Branch("deltaPhi_WJetMet_UnclEnUp", &deltaPhi_WJetMet_UnclEnUp,   "deltaPhi_WJetMet_UnclEnUp/D"  );
-    outTree_->Branch("deltaPhi_WJetMet_UnclEnDown", &deltaPhi_WJetMet_UnclEnDown,   "deltaPhi_WJetMet_UnclEnDown/D"  );
-    //JEC
-    outTree_->Branch("deltaPhi_WJetMet_JECUp", &deltaPhi_WJetMet_JECUp,   "deltaPhi_WJetMet_JECUp/D"  );
-    outTree_->Branch("deltaPhi_WJetMet_JECDown", &deltaPhi_WJetMet_JECDown,   "deltaPhi_WJetMet_JECDown/D"  );
-    //Lepton energy scale
-    outTree_->Branch("deltaPhi_WJetMet_LeptonEnUp", &deltaPhi_WJetMet_LeptonEnUp,   "deltaPhi_WJetMet_LeptonEnUp/D"  );
-    outTree_->Branch("deltaPhi_WJetMet_LeptonEnDown", &deltaPhi_WJetMet_LeptonEnDown,   "deltaPhi_WJetMet_LeptonEnDown/D"  );
-    //JER
-    outTree_->Branch("deltaPhi_WJetMet_JERUp", &deltaPhi_WJetMet_JERUp,   "deltaPhi_WJetMet_JERUp/D"  );
-    outTree_->Branch("deltaPhi_WJetMet_JERDown", &deltaPhi_WJetMet_JERDown,   "deltaPhi_WJetMet_LeptonEnDown/D"  );
-    /////////////////////
-    //UnclEn
-    outTree_->Branch("deltaPhi_WJetWlep_UnclEnUp", &deltaPhi_WJetWlep_UnclEnUp,   "deltaPhi_WJetWlep_UnclEnUp/D"  );
-    outTree_->Branch("deltaPhi_WJetWlep_UnclEnDown", &deltaPhi_WJetWlep_UnclEnDown,   "deltaPhi_WJetWlep_UnclEnDown/D"  );
-    //JEC
-    outTree_->Branch("deltaPhi_WJetWlep_JECUp", &deltaPhi_WJetWlep_JECUp,   "deltaPhi_WJetWlep_JECUp/D"  );
-    outTree_->Branch("deltaPhi_WJetWlep_JECDown", &deltaPhi_WJetWlep_JECDown,   "deltaPhi_WJetWlep_JECDown/D"  );
-    //Lepton energy scale
-    outTree_->Branch("deltaPhi_WJetWlep_LeptonEnUp", &deltaPhi_WJetWlep_LeptonEnUp,   "deltaPhi_WJetWlep_LeptonEnUp/D"  );
-    outTree_->Branch("deltaPhi_WJetWlep_LeptonEnDown", &deltaPhi_WJetWlep_LeptonEnDown,   "deltaPhi_WJetWlep_LeptonEnDown/D"  );
-  }
+  if (isMC)
+    {
+      //UnclEn
+      outTree_->Branch("deltaPhi_LeptonMet_UnclEnUp", &deltaPhi_LeptonMet_UnclEnUp,   "deltaPhi_LeptonMet_UnclEnUp/D"  );
+      outTree_->Branch("deltaPhi_LeptonMet_UnclEnDown", &deltaPhi_LeptonMet_UnclEnDown,   "deltaPhi_LeptonMet_UnclEnDown/D"  );
+      //JEC
+      outTree_->Branch("deltaPhi_LeptonMet_JECUp", &deltaPhi_LeptonMet_JECUp,   "deltaPhi_LeptonMet_JECUp/D"  );
+      outTree_->Branch("deltaPhi_LeptonMet_JECDown", &deltaPhi_LeptonMet_JECDown,   "deltaPhi_LeptonMet_JECDown/D"  );
+      //Lepton energy scale
+      outTree_->Branch("deltaPhi_LeptonMet_LeptonEnUp", &deltaPhi_LeptonMet_LeptonEnUp,   "deltaPhi_LeptonMet_LeptonEnUp/D"  );
+      outTree_->Branch("deltaPhi_LeptonMet_LeptonEnDown", &deltaPhi_LeptonMet_LeptonEnDown,   "deltaPhi_LeptonMet_LeptonEnDown/D"  );
+      //JER
+      outTree_->Branch("deltaPhi_LeptonMet_JERUp", &deltaPhi_LeptonMet_JERUp,   "deltaPhi_LeptonMet_JERUp/D"  );
+      outTree_->Branch("deltaPhi_LeptonMet_JERDown", &deltaPhi_LeptonMet_JERDown,   "deltaPhi_LeptonMet_LeptonEnDown/D"  );
+      /////////////////////
+      //UnclEn
+      outTree_->Branch("deltaPhi_WJetMet_UnclEnUp", &deltaPhi_WJetMet_UnclEnUp,   "deltaPhi_WJetMet_UnclEnUp/D"  );
+      outTree_->Branch("deltaPhi_WJetMet_UnclEnDown", &deltaPhi_WJetMet_UnclEnDown,   "deltaPhi_WJetMet_UnclEnDown/D"  );
+      //JEC
+      outTree_->Branch("deltaPhi_WJetMet_JECUp", &deltaPhi_WJetMet_JECUp,   "deltaPhi_WJetMet_JECUp/D"  );
+      outTree_->Branch("deltaPhi_WJetMet_JECDown", &deltaPhi_WJetMet_JECDown,   "deltaPhi_WJetMet_JECDown/D"  );
+      //Lepton energy scale
+      outTree_->Branch("deltaPhi_WJetMet_LeptonEnUp", &deltaPhi_WJetMet_LeptonEnUp,   "deltaPhi_WJetMet_LeptonEnUp/D"  );
+      outTree_->Branch("deltaPhi_WJetMet_LeptonEnDown", &deltaPhi_WJetMet_LeptonEnDown,   "deltaPhi_WJetMet_LeptonEnDown/D"  );
+      //JER
+      outTree_->Branch("deltaPhi_WJetMet_JERUp", &deltaPhi_WJetMet_JERUp,   "deltaPhi_WJetMet_JERUp/D"  );
+      outTree_->Branch("deltaPhi_WJetMet_JERDown", &deltaPhi_WJetMet_JERDown,   "deltaPhi_WJetMet_LeptonEnDown/D"  );
+      /////////////////////
+      //UnclEn
+      outTree_->Branch("deltaPhi_WJetWlep_UnclEnUp", &deltaPhi_WJetWlep_UnclEnUp,   "deltaPhi_WJetWlep_UnclEnUp/D"  );
+      outTree_->Branch("deltaPhi_WJetWlep_UnclEnDown", &deltaPhi_WJetWlep_UnclEnDown,   "deltaPhi_WJetWlep_UnclEnDown/D"  );
+      //JEC
+      outTree_->Branch("deltaPhi_WJetWlep_JECUp", &deltaPhi_WJetWlep_JECUp,   "deltaPhi_WJetWlep_JECUp/D"  );
+      outTree_->Branch("deltaPhi_WJetWlep_JECDown", &deltaPhi_WJetWlep_JECDown,   "deltaPhi_WJetWlep_JECDown/D"  );
+      //Lepton energy scale
+      outTree_->Branch("deltaPhi_WJetWlep_LeptonEnUp", &deltaPhi_WJetWlep_LeptonEnUp,   "deltaPhi_WJetWlep_LeptonEnUp/D"  );
+      outTree_->Branch("deltaPhi_WJetWlep_LeptonEnDown", &deltaPhi_WJetWlep_LeptonEnDown,   "deltaPhi_WJetWlep_LeptonEnDown/D"  );
+    }
   //Jet observables
   outTree_->Branch("NAK8jet",            &NAK8jet,              "NAK8jet/I"   );
   outTree_->Branch("jet_pt",  	      &jet_pt,	  	  "jet_pt/D"   );
@@ -1068,67 +1074,69 @@ TreeMaker::TreeMaker(const edm::ParameterSet& iConfig):
   outTree_->Branch("jet_mass_softdrop_PUPPI",    &jet_mass_softdrop_PUPPI,    "jet_mass_softdrop_PUPPI/D"   );
   outTree_->Branch("jet_tau21_DT",    &jet_tau21_DT,    "jet_tau21_DT/D"   );
   
-  if (isMC) {
-     //JEC uncertainties
-    outTree_->Branch("JECunc",    &JECunc,    "JECunc/D"   ); 
-    outTree_->Branch("jet_pt_JECUp",    &jet_pt_JECUp,    "jet_pt_JECUp/D"   ); 
-    outTree_->Branch("jet_pt_JECDown",    &jet_pt_JECDown,    "jet_pt_JECDown/D"   );  
-    outTree_->Branch("jet_mass_JECUp",    &jet_mass_JECUp,    "jet_mass_JECUp/D"   ); 
-    outTree_->Branch("jet_mass_JECDown",    &jet_mass_JECDown,    "jet_mass_JECDown/D"   );  
-    //JER uncertainties
-    outTree_->Branch("jet_pt_JERUp",    &jet_pt_JERUp,    "jet_pt_JERUp/D"   ); 
-    outTree_->Branch("jet_pt_JERDown",    &jet_pt_JERDown,    "jet_pt_JERDown/D"   );  
-    outTree_->Branch("jet_mass_JERUp",    &jet_mass_JERUp,    "jet_mass_JERUp/D"   ); 
-    outTree_->Branch("jet_mass_JERDown",    &jet_mass_JERDown,    "jet_mass_JERDown/D"   );  
-    //JEC uncertainties
-    outTree_->Branch("Mjpruned_JECUp",    &jet_mass_pruned_JECUp,    "Mjpruned_JECUp/D"   ); 
-    outTree_->Branch("Mjpruned_JECDown",    &jet_mass_pruned_JECDown,    "Mjpruned_JECDown/D"   );  
-    outTree_->Branch("jet_mass_softdrop_JECUp",    &jet_mass_softdrop_JECUp,    "jet_mass_softdrop_JECUp/D"   ); 
-    outTree_->Branch("jet_mass_softdrop_JECDown",    &jet_mass_softdrop_JECDown,    "jet_mass_softdrop_JECDown/D"   );  
-    outTree_->Branch("jet_mass_softdrop_PUPPI_JECUp",    &jet_mass_softdrop_PUPPI_JECUp,    "jet_mass_softdrop_PUPPI_JECUp/D"   );
-    outTree_->Branch("jet_mass_softdrop_PUPPI_JECDown",    &jet_mass_softdrop_PUPPI_JECDown,    "jet_mass_softdrop_PUPPI_JECDown/D"   );
-    //JER uncertainties
-    outTree_->Branch("Mjpruned_JERUp",    &jet_mass_pruned_JERUp,    "Mjpruned_JERUp/D"   ); 
-    outTree_->Branch("Mjpruned_JERDown",    &jet_mass_pruned_JERDown,    "Mjpruned_JERDown/D"   );  
-    outTree_->Branch("jet_mass_softdrop_JERUp",    &jet_mass_softdrop_JERUp,    "jet_mass_softdrop_JERUp/D"   ); 
-    outTree_->Branch("jet_mass_softdrop_JERDown",    &jet_mass_softdrop_JERDown,    "jet_mass_softdrop_JERDown/D"   );  
-    outTree_->Branch("jet_mass_softdrop_PUPPI_JERUp",    &jet_mass_softdrop_PUPPI_JERUp,    "jet_mass_softdrop_PUPPI_JERUp/D"   );
-    outTree_->Branch("jet_mass_softdrop_PUPPI_JERDown",    &jet_mass_softdrop_PUPPI_JERDown,    "jet_mass_softdrop_PUPPI_JERDown/D"   );
-    outTree_->Branch("isMatched",    &isMatched_,    "isMatched/B"   ); 
-    //add info for AK4 jets
-    outTree_ -> Branch("jetFlavours",  &jetFlavours); 
+  if (isMC)
+    {
+      //JEC uncertainties
+      outTree_->Branch("JECunc",    &JECunc,    "JECunc/D"   ); 
+      outTree_->Branch("jet_pt_JECUp",    &jet_pt_JECUp,    "jet_pt_JECUp/D"   ); 
+      outTree_->Branch("jet_pt_JECDown",    &jet_pt_JECDown,    "jet_pt_JECDown/D"   );  
+      outTree_->Branch("jet_mass_JECUp",    &jet_mass_JECUp,    "jet_mass_JECUp/D"   ); 
+      outTree_->Branch("jet_mass_JECDown",    &jet_mass_JECDown,    "jet_mass_JECDown/D"   );  
+      //JER uncertainties
+      outTree_->Branch("jet_pt_JERUp",    &jet_pt_JERUp,    "jet_pt_JERUp/D"   ); 
+      outTree_->Branch("jet_pt_JERDown",    &jet_pt_JERDown,    "jet_pt_JERDown/D"   );  
+      outTree_->Branch("jet_mass_JERUp",    &jet_mass_JERUp,    "jet_mass_JERUp/D"   ); 
+      outTree_->Branch("jet_mass_JERDown",    &jet_mass_JERDown,    "jet_mass_JERDown/D"   );  
+      //JEC uncertainties
+      outTree_->Branch("Mjpruned_JECUp",    &jet_mass_pruned_JECUp,    "Mjpruned_JECUp/D"   ); 
+      outTree_->Branch("Mjpruned_JECDown",    &jet_mass_pruned_JECDown,    "Mjpruned_JECDown/D"   );  
+      outTree_->Branch("jet_mass_softdrop_JECUp",    &jet_mass_softdrop_JECUp,    "jet_mass_softdrop_JECUp/D"   ); 
+      outTree_->Branch("jet_mass_softdrop_JECDown",    &jet_mass_softdrop_JECDown,    "jet_mass_softdrop_JECDown/D"   );  
+      outTree_->Branch("jet_mass_softdrop_PUPPI_JECUp",    &jet_mass_softdrop_PUPPI_JECUp,    "jet_mass_softdrop_PUPPI_JECUp/D"   );
+      outTree_->Branch("jet_mass_softdrop_PUPPI_JECDown",    &jet_mass_softdrop_PUPPI_JECDown,    "jet_mass_softdrop_PUPPI_JECDown/D"   );
+      //JER uncertainties
+      outTree_->Branch("Mjpruned_JERUp",    &jet_mass_pruned_JERUp,    "Mjpruned_JERUp/D"   ); 
+      outTree_->Branch("Mjpruned_JERDown",    &jet_mass_pruned_JERDown,    "Mjpruned_JERDown/D"   );  
+      outTree_->Branch("jet_mass_softdrop_JERUp",    &jet_mass_softdrop_JERUp,    "jet_mass_softdrop_JERUp/D"   ); 
+      outTree_->Branch("jet_mass_softdrop_JERDown",    &jet_mass_softdrop_JERDown,    "jet_mass_softdrop_JERDown/D"   );  
+      outTree_->Branch("jet_mass_softdrop_PUPPI_JERUp",    &jet_mass_softdrop_PUPPI_JERUp,    "jet_mass_softdrop_PUPPI_JERUp/D"   );
+      outTree_->Branch("jet_mass_softdrop_PUPPI_JERDown",    &jet_mass_softdrop_PUPPI_JERDown,    "jet_mass_softdrop_PUPPI_JERDown/D"   );
+      outTree_->Branch("isMatched",    &isMatched_,    "isMatched/B"   ); 
+      //add info for AK4 jets
+      outTree_ -> Branch("jetFlavours",  &jetFlavours); 
     
-    outTree_ -> Branch("BgenjetStatus21_pt",  &BgenjetStatus21_pt); 
-    outTree_ -> Branch("BgenjetStatus21_eta",  &BgenjetStatus21_eta); 
-    outTree_ -> Branch("BgenjetStatus21_phi",  &BgenjetStatus21_phi); 
-    outTree_ -> Branch("BgenjetStatus21_mass",  &BgenjetStatus21_mass); 
-    outTree_ -> Branch("BgenjetStatus21_motherPDGID",  &BgenjetStatus21_motherPDGID); 
+      outTree_ -> Branch("BgenjetStatus21_pt",  &BgenjetStatus21_pt); 
+      outTree_ -> Branch("BgenjetStatus21_eta",  &BgenjetStatus21_eta); 
+      outTree_ -> Branch("BgenjetStatus21_phi",  &BgenjetStatus21_phi); 
+      outTree_ -> Branch("BgenjetStatus21_mass",  &BgenjetStatus21_mass); 
+      outTree_ -> Branch("BgenjetStatus21_motherPDGID",  &BgenjetStatus21_motherPDGID); 
 
-    outTree_ -> Branch("BgenjetStatus43_pt",  &BgenjetStatus43_pt); 
-    outTree_ -> Branch("BgenjetStatus43_eta",  &BgenjetStatus43_eta); 
-    outTree_ -> Branch("BgenjetStatus43_phi",  &BgenjetStatus43_phi); 
-    outTree_ -> Branch("BgenjetStatus43_mass",  &BgenjetStatus43_mass); 
-    outTree_ -> Branch("BgenjetStatus43_motherPDGID",  &BgenjetStatus43_motherPDGID); 
-  }
+      outTree_ -> Branch("BgenjetStatus43_pt",  &BgenjetStatus43_pt); 
+      outTree_ -> Branch("BgenjetStatus43_eta",  &BgenjetStatus43_eta); 
+      outTree_ -> Branch("BgenjetStatus43_phi",  &BgenjetStatus43_phi); 
+      outTree_ -> Branch("BgenjetStatus43_mass",  &BgenjetStatus43_mass); 
+      outTree_ -> Branch("BgenjetStatus43_motherPDGID",  &BgenjetStatus43_motherPDGID); 
+    }
   outTree_->Branch("njets",         &njets,           "njets/I"   );
   outTree_->Branch("nbtag",         &nbtag,           "nbtag/I"   );
   outTree_->Branch("nbtagMedium",         &nbtagMedium,           "nbtagMedium/I"   );
   outTree_->Branch("nbtagLoose",         &nbtagLoose,           "nbtagLoose/I"   );
 
-  if (isMC) {
-    outTree_->Branch("njets_JERUp",         &njets_JERUp,           "njets_JERUp/I"   );
-    outTree_->Branch("njets_JERDown",       &njets_JERDown,         "njets_JERDown/I"   );
+  if (isMC)
+    {
+      outTree_->Branch("njets_JERUp",         &njets_JERUp,           "njets_JERUp/I"   );
+      outTree_->Branch("njets_JERDown",       &njets_JERDown,         "njets_JERDown/I"   );
 
-    outTree_->Branch("nbtag_JERUp",         &nbtag_JERUp,           "nbtag_JERUp/I"   );
-    outTree_->Branch("nbtag_JERDown",       &nbtag_JERDown,         "nbtag_JERDown/I"   );
+      outTree_->Branch("nbtag_JERUp",         &nbtag_JERUp,           "nbtag_JERUp/I"   );
+      outTree_->Branch("nbtag_JERDown",       &nbtag_JERDown,         "nbtag_JERDown/I"   );
 
-    outTree_->Branch("njets_JECUp",         &njets_JECUp,           "njets_JECRUp/I"   );
-    outTree_->Branch("njets_JECDown",       &njets_JECDown,         "njets_JECDown/I"   );
+      outTree_->Branch("njets_JECUp",         &njets_JECUp,           "njets_JECRUp/I"   );
+      outTree_->Branch("njets_JECDown",       &njets_JECDown,         "njets_JECDown/I"   );
 
-    outTree_->Branch("nbtag_JECUp",         &nbtag_JECUp,           "nbtag_JECUp/I"   );
-    outTree_->Branch("nbtag_JECDown",       &nbtag_JECDown,         "nbtag_JECDown/I"   );
+      outTree_->Branch("nbtag_JECUp",         &nbtag_JECUp,           "nbtag_JECUp/I"   );
+      outTree_->Branch("nbtag_JECDown",       &nbtag_JECDown,         "nbtag_JECDown/I"   );
 
-  }
+    }
   
   outTree_->Branch("jet2_pt",  	      &jet2_pt,	          "jet2_pt/D"   );
   outTree_->Branch("jet2_btag",       &jet2_btag,         "jet2_btag/D"   );
@@ -1137,219 +1145,221 @@ TreeMaker::TreeMaker(const edm::ParameterSet& iConfig):
   
   outTree_->Branch("MWW",       &m_lvj,         "MWW/D"   );
   outTree_->Branch("MWW_SD",	      &m_lvj_SD,         "MWW_SD/D"   );
-  if (isMC) {
-    outTree_->Branch("MWW_UnclEnUp",       &m_lvj_UnclEnUp,         "MWW_UnclEnUp/D"   );
-    outTree_->Branch("MWW_UnclEnDown",       &m_lvj_UnclEnDown,         "MWW_UnclEnDown/D"   );      
-    outTree_->Branch("MWW_JECUp",       &m_lvj_JECUp,         "MWW_JECUp/D"   );
-    outTree_->Branch("MWW_JECDown",       &m_lvj_JECDown,         "MWW_JECDown/D"   );  
-    outTree_->Branch("MWW_LeptonEnUp",       &m_lvj_LeptonEnUp,         "MWW_LeptonEnUp/D"   );
-    outTree_->Branch("MWW_LeptonEnDown",       &m_lvj_LeptonEnDown,         "MWW_LeptonEnDown/D"   );      
-    outTree_->Branch("MWW_LeptonResUp",       &m_lvj_LeptonResUp,         "MWW_LeptonResUp/D"   );
-    outTree_->Branch("MWW_LeptonResDown",       &m_lvj_LeptonResDown,         "MWW_LeptonResDown/D"   );   
-    outTree_->Branch("MWW_JERUp",       &m_lvj_JERUp,         "MWW_JERUp/D"   );
-    outTree_->Branch("MWW_JERDown",       &m_lvj_JERDown,         "MWW_JERDown/D"   );       
+  if (isMC)
+    {
+      outTree_->Branch("MWW_UnclEnUp",       &m_lvj_UnclEnUp,         "MWW_UnclEnUp/D"   );
+      outTree_->Branch("MWW_UnclEnDown",       &m_lvj_UnclEnDown,         "MWW_UnclEnDown/D"   );      
+      outTree_->Branch("MWW_JECUp",       &m_lvj_JECUp,         "MWW_JECUp/D"   );
+      outTree_->Branch("MWW_JECDown",       &m_lvj_JECDown,         "MWW_JECDown/D"   );  
+      outTree_->Branch("MWW_LeptonEnUp",       &m_lvj_LeptonEnUp,         "MWW_LeptonEnUp/D"   );
+      outTree_->Branch("MWW_LeptonEnDown",       &m_lvj_LeptonEnDown,         "MWW_LeptonEnDown/D"   );      
+      outTree_->Branch("MWW_LeptonResUp",       &m_lvj_LeptonResUp,         "MWW_LeptonResUp/D"   );
+      outTree_->Branch("MWW_LeptonResDown",       &m_lvj_LeptonResDown,         "MWW_LeptonResDown/D"   );   
+      outTree_->Branch("MWW_JERUp",       &m_lvj_JERUp,         "MWW_JERUp/D"   );
+      outTree_->Branch("MWW_JERDown",       &m_lvj_JERDown,         "MWW_JERDown/D"   );       
 
-    outTree_->Branch("MWW_SD_UnclEnUp",       &m_lvj_SD_UnclEnUp,         "MWW_SD_UnclEnUp/D"   );
-    outTree_->Branch("MWW_SD_UnclEnDown",       &m_lvj_SD_UnclEnDown,         "MWW_SD_UnclEnDown/D"   );
-    outTree_->Branch("MWW_SD_JECUp",       &m_lvj_SD_JECUp,         "MWW_SD_JECUp/D"   );
-    outTree_->Branch("MWW_SD_JECDown",       &m_lvj_SD_JECDown,         "MWW_SD_JECDown/D"   );
-    outTree_->Branch("MWW_SD_LeptonEnUp",       &m_lvj_SD_LeptonEnUp,         "MWW_SD_LeptonEnUp/D"   );
-    outTree_->Branch("MWW_SD_LeptonEnDown",       &m_lvj_SD_LeptonEnDown,         "MWW_SD_LeptonEnDown/D"   );
-    outTree_->Branch("MWW_SD_LeptonResUp",       &m_lvj_SD_LeptonResUp,         "MWW_SD_LeptonResUp/D"   );
-    outTree_->Branch("MWW_SD_LeptonResDown",       &m_lvj_SD_LeptonResDown,         "MWW_SD_LeptonResDown/D"   );
-    outTree_->Branch("MWW_SD_JERUp",       &m_lvj_SD_JERUp,         "MWW_SD_JERUp/D"   );
-    outTree_->Branch("MWW_SD_JERDown",       &m_lvj_SD_JERDown,         "MWW_SD_JERDown/D"   );
+      outTree_->Branch("MWW_SD_UnclEnUp",       &m_lvj_SD_UnclEnUp,         "MWW_SD_UnclEnUp/D"   );
+      outTree_->Branch("MWW_SD_UnclEnDown",       &m_lvj_SD_UnclEnDown,         "MWW_SD_UnclEnDown/D"   );
+      outTree_->Branch("MWW_SD_JECUp",       &m_lvj_SD_JECUp,         "MWW_SD_JECUp/D"   );
+      outTree_->Branch("MWW_SD_JECDown",       &m_lvj_SD_JECDown,         "MWW_SD_JECDown/D"   );
+      outTree_->Branch("MWW_SD_LeptonEnUp",       &m_lvj_SD_LeptonEnUp,         "MWW_SD_LeptonEnUp/D"   );
+      outTree_->Branch("MWW_SD_LeptonEnDown",       &m_lvj_SD_LeptonEnDown,         "MWW_SD_LeptonEnDown/D"   );
+      outTree_->Branch("MWW_SD_LeptonResUp",       &m_lvj_SD_LeptonResUp,         "MWW_SD_LeptonResUp/D"   );
+      outTree_->Branch("MWW_SD_LeptonResDown",       &m_lvj_SD_LeptonResDown,         "MWW_SD_LeptonResDown/D"   );
+      outTree_->Branch("MWW_SD_JERUp",       &m_lvj_SD_JERUp,         "MWW_SD_JERUp/D"   );
+      outTree_->Branch("MWW_SD_JERDown",       &m_lvj_SD_JERDown,         "MWW_SD_JERDown/D"   );
 
 #ifdef ANGLE_TESTING
-    //INTERMEDIATE STEPS VARIABLES
-    outTree_->Branch("leptons_in_lep_px", &leptons_in_lep_px, "leptons_in_lep_px/D");
-    outTree_->Branch("leptons_in_lep_py", &leptons_in_lep_py, "leptons_in_lep_py/D");
-    outTree_->Branch("leptons_in_lep_pz", &leptons_in_lep_pz, "leptons_in_lep_pz/D");
+      //INTERMEDIATE STEPS VARIABLES
+      outTree_->Branch("leptons_in_lep_px", &leptons_in_lep_px, "leptons_in_lep_px/D");
+      outTree_->Branch("leptons_in_lep_py", &leptons_in_lep_py, "leptons_in_lep_py/D");
+      outTree_->Branch("leptons_in_lep_pz", &leptons_in_lep_pz, "leptons_in_lep_pz/D");
   
-    outTree_->Branch("partons_in_lep_px", &partons_in_lep_px, "partons_in_lep_px/D");
-    outTree_->Branch("partons_in_lep_py", &partons_in_lep_py, "partons_in_lep_py/D");
-    outTree_->Branch("partons_in_lep_pz", &partons_in_lep_pz, "partons_in_lep_pz/D");
+      outTree_->Branch("partons_in_lep_px", &partons_in_lep_px, "partons_in_lep_px/D");
+      outTree_->Branch("partons_in_lep_py", &partons_in_lep_py, "partons_in_lep_py/D");
+      outTree_->Branch("partons_in_lep_pz", &partons_in_lep_pz, "partons_in_lep_pz/D");
   
-    outTree_->Branch("parton1_in_lep_px", &parton1_in_lep_px, "parton1_in_lep_px/D");
-    outTree_->Branch("parton1_in_lep_py", &parton1_in_lep_py, "parton1_in_lep_py/D"); 
-    outTree_->Branch("parton1_in_lep_pz", &parton1_in_lep_pz, "parton1_in_lep_pz/D");
+      outTree_->Branch("parton1_in_lep_px", &parton1_in_lep_px, "parton1_in_lep_px/D");
+      outTree_->Branch("parton1_in_lep_py", &parton1_in_lep_py, "parton1_in_lep_py/D"); 
+      outTree_->Branch("parton1_in_lep_pz", &parton1_in_lep_pz, "parton1_in_lep_pz/D");
 
-    outTree_->Branch("parton2_in_lep_px", &parton2_in_lep_px, "parton2_in_lep_px/D");
-    outTree_->Branch("parton2_in_lep_py", &parton2_in_lep_py, "parton2_in_lep_py/D");
-    outTree_->Branch("parton2_in_lep_pz", &parton2_in_lep_pz, "parton2_in_lep_pz/D");
+      outTree_->Branch("parton2_in_lep_px", &parton2_in_lep_px, "parton2_in_lep_px/D");
+      outTree_->Branch("parton2_in_lep_py", &parton2_in_lep_py, "parton2_in_lep_py/D");
+      outTree_->Branch("parton2_in_lep_pz", &parton2_in_lep_pz, "parton2_in_lep_pz/D");
   
-    outTree_->Branch("lepton1_in_lep_px", &lepton1_in_lep_px, "lepton1_in_lep_px/D");
-    outTree_->Branch("lepton1_in_lep_py", &lepton1_in_lep_py, "lepton1_in_lep_py/D");
-    outTree_->Branch("lepton1_in_lep_pz", &lepton1_in_lep_pz, "lepton1_in_lep_pz/D");
+      outTree_->Branch("lepton1_in_lep_px", &lepton1_in_lep_px, "lepton1_in_lep_px/D");
+      outTree_->Branch("lepton1_in_lep_py", &lepton1_in_lep_py, "lepton1_in_lep_py/D");
+      outTree_->Branch("lepton1_in_lep_pz", &lepton1_in_lep_pz, "lepton1_in_lep_pz/D");
   
-    outTree_->Branch("lepton1_dotted_x", &lepton1_dotted_x, "lepton1_dotted_x/D");
-    outTree_->Branch("lepton1_dotted_y", &lepton1_dotted_y, "lepton1_dotted_y/D");
-    outTree_->Branch("lepton1_dotted_z", &lepton1_dotted_z, "lepton1_dotted_z/D");
+      outTree_->Branch("lepton1_dotted_x", &lepton1_dotted_x, "lepton1_dotted_x/D");
+      outTree_->Branch("lepton1_dotted_y", &lepton1_dotted_y, "lepton1_dotted_y/D");
+      outTree_->Branch("lepton1_dotted_z", &lepton1_dotted_z, "lepton1_dotted_z/D");
   
-    outTree_->Branch("leptons_in_had_px", &leptons_in_had_px, "leptons_in_had_px/D");
-    outTree_->Branch("leptons_in_had_py", &leptons_in_had_py, "leptons_in_had_py/D");
-    outTree_->Branch("leptons_in_had_pz", &leptons_in_had_pz, "leptons_in_had_pz/D");
+      outTree_->Branch("leptons_in_had_px", &leptons_in_had_px, "leptons_in_had_px/D");
+      outTree_->Branch("leptons_in_had_py", &leptons_in_had_py, "leptons_in_had_py/D");
+      outTree_->Branch("leptons_in_had_pz", &leptons_in_had_pz, "leptons_in_had_pz/D");
   
-    outTree_->Branch("lepton1_in_had_px", &lepton1_in_had_px, "lepton1_in_had_px/D");
-    outTree_->Branch("lepton1_in_had_py", &lepton1_in_had_py, "lepton1_in_had_py/D");
-    outTree_->Branch("lepton1_in_had_pz", &lepton1_in_had_pz, "lepton1_in_had_pz/D");
+      outTree_->Branch("lepton1_in_had_px", &lepton1_in_had_px, "lepton1_in_had_px/D");
+      outTree_->Branch("lepton1_in_had_py", &lepton1_in_had_py, "lepton1_in_had_py/D");
+      outTree_->Branch("lepton1_in_had_pz", &lepton1_in_had_pz, "lepton1_in_had_pz/D");
   
-    outTree_->Branch("lepton2_in_had_px", &lepton2_in_had_px, "lepton2_in_had_px/D");
-    outTree_->Branch("lepton2_in_had_py", &lepton2_in_had_py, "lepton2_in_had_py/D");
-    outTree_->Branch("lepton2_in_had_pz", &lepton2_in_had_pz, "lepton2_in_had_pz/D");
+      outTree_->Branch("lepton2_in_had_px", &lepton2_in_had_px, "lepton2_in_had_px/D");
+      outTree_->Branch("lepton2_in_had_py", &lepton2_in_had_py, "lepton2_in_had_py/D");
+      outTree_->Branch("lepton2_in_had_pz", &lepton2_in_had_pz, "lepton2_in_had_pz/D");
   
-    outTree_->Branch("parton1_in_had_px", &parton1_in_had_px, "parton1_in_had_px/D");
-    outTree_->Branch("parton1_in_had_py", &parton1_in_had_py, "parton1_in_had_py/D");
-    outTree_->Branch("parton1_in_had_pz", &parton1_in_had_pz, "parton1_in_had_pz/D");
+      outTree_->Branch("parton1_in_had_px", &parton1_in_had_px, "parton1_in_had_px/D");
+      outTree_->Branch("parton1_in_had_py", &parton1_in_had_py, "parton1_in_had_py/D");
+      outTree_->Branch("parton1_in_had_pz", &parton1_in_had_pz, "parton1_in_had_pz/D");
   
-    outTree_->Branch("parton1_dotted_x", &parton1_dotted_x, "parton1_dotted_x/D");
-    outTree_->Branch("parton1_dotted_y", &parton1_dotted_y, "parton1_dotted_y/D");
-    outTree_->Branch("parton1_dotted_z", &parton1_dotted_z, "parton1_dotted_z/D");
+      outTree_->Branch("parton1_dotted_x", &parton1_dotted_x, "parton1_dotted_x/D");
+      outTree_->Branch("parton1_dotted_y", &parton1_dotted_y, "parton1_dotted_y/D");
+      outTree_->Branch("parton1_dotted_z", &parton1_dotted_z, "parton1_dotted_z/D");
   
-    outTree_->Branch("complicated1_px", &complicated1_px, "complicated1_px/D");
-    outTree_->Branch("complicated1_py", &complicated1_py, "complicated1_py/D");
-    outTree_->Branch("complicated1_pz", &complicated1_pz, "complicated1_pz/D");
+      outTree_->Branch("complicated1_px", &complicated1_px, "complicated1_px/D");
+      outTree_->Branch("complicated1_py", &complicated1_py, "complicated1_py/D");
+      outTree_->Branch("complicated1_pz", &complicated1_pz, "complicated1_pz/D");
   
-    outTree_->Branch("complicated2_px", &complicated2_px, "complicated2_px/D");
-    outTree_->Branch("complicated2_py", &complicated2_py, "complicated2_py/D");
-    outTree_->Branch("complicated2_pz", &complicated2_pz, "complicated2_pz/D");
+      outTree_->Branch("complicated2_px", &complicated2_px, "complicated2_px/D");
+      outTree_->Branch("complicated2_py", &complicated2_py, "complicated2_py/D");
+      outTree_->Branch("complicated2_pz", &complicated2_pz, "complicated2_pz/D");
   
-    outTree_->Branch("lepton_sumWWframe_X", &lepton_sumWWframe_X, "lepton_sumWWframe_X/D");
-    outTree_->Branch("lepton_sumWWframe_Y", &lepton_sumWWframe_Y, "lepton_sumWWframe_Y/D");
-    outTree_->Branch("lepton_sumWWframe_Z", &lepton_sumWWframe_Z, "lepton_sumWWframe_Z/D");
+      outTree_->Branch("lepton_sumWWframe_X", &lepton_sumWWframe_X, "lepton_sumWWframe_X/D");
+      outTree_->Branch("lepton_sumWWframe_Y", &lepton_sumWWframe_Y, "lepton_sumWWframe_Y/D");
+      outTree_->Branch("lepton_sumWWframe_Z", &lepton_sumWWframe_Z, "lepton_sumWWframe_Z/D");
   
-    outTree_->Branch("parton_sumWWframe_X", &parton_sumWWframe_X, "parton_sumWWframe_X/D");
-    outTree_->Branch("parton_sumWWframe_Y", &parton_sumWWframe_Y, "parton_sumWWframe_Y/D");
-    outTree_->Branch("parton_sumWWframe_Z", &parton_sumWWframe_Z, "parton_sumWWframe_Z/D");
+      outTree_->Branch("parton_sumWWframe_X", &parton_sumWWframe_X, "parton_sumWWframe_X/D");
+      outTree_->Branch("parton_sumWWframe_Y", &parton_sumWWframe_Y, "parton_sumWWframe_Y/D");
+      outTree_->Branch("parton_sumWWframe_Z", &parton_sumWWframe_Z, "parton_sumWWframe_Z/D");
   
-    outTree_->Branch("lepton1WWframe_X", &lepton1WWframe_X, "lepton1WWframe_X/D");
-    outTree_->Branch("lepton1WWframe_Y", &lepton1WWframe_Y, "lepton1WWframe_Y/D");
-    outTree_->Branch("lepton1WWframe_Z", &lepton1WWframe_Z, "lepton1WWframe_Z/D");
+      outTree_->Branch("lepton1WWframe_X", &lepton1WWframe_X, "lepton1WWframe_X/D");
+      outTree_->Branch("lepton1WWframe_Y", &lepton1WWframe_Y, "lepton1WWframe_Y/D");
+      outTree_->Branch("lepton1WWframe_Z", &lepton1WWframe_Z, "lepton1WWframe_Z/D");
   
-    outTree_->Branch("parton1WWframe_X", &parton1WWframe_X, "parton1WWframe_X/D");
-    outTree_->Branch("parton1WWframe_Y", &parton1WWframe_Y, "parton1WWframe_Y/D");
-    outTree_->Branch("parton1WWframe_Z", &parton1WWframe_Z, "parton1WWframe_Z/D");
+      outTree_->Branch("parton1WWframe_X", &parton1WWframe_X, "parton1WWframe_X/D");
+      outTree_->Branch("parton1WWframe_Y", &parton1WWframe_Y, "parton1WWframe_Y/D");
+      outTree_->Branch("parton1WWframe_Z", &parton1WWframe_Z, "parton1WWframe_Z/D");
 
-    outTree_->Branch("boostWWframe_X", &boostWWframe_X, "boostWWframe_X/D");
-    outTree_->Branch("boostWWframe_Y", &boostWWframe_Y, "boostWWframe_Y/D");
-    outTree_->Branch("boostWWframe_Z", &boostWWframe_Z, "boostWWframe_Z/D");
+      outTree_->Branch("boostWWframe_X", &boostWWframe_X, "boostWWframe_X/D");
+      outTree_->Branch("boostWWframe_Y", &boostWWframe_Y, "boostWWframe_Y/D");
+      outTree_->Branch("boostWWframe_Z", &boostWWframe_Z, "boostWWframe_Z/D");
   
-    outTree_->Branch("boostWlep_X", &boostWlep_X, "boostWlep_X/D");
-    outTree_->Branch("boostWlep_Y", &boostWlep_Y, "boostWlep_Y/D");
-    outTree_->Branch("boostWlep_Z", &boostWlep_Z, "boostWlep_Z/D");
+      outTree_->Branch("boostWlep_X", &boostWlep_X, "boostWlep_X/D");
+      outTree_->Branch("boostWlep_Y", &boostWlep_Y, "boostWlep_Y/D");
+      outTree_->Branch("boostWlep_Z", &boostWlep_Z, "boostWlep_Z/D");
   
-    outTree_->Branch("boostWhad_X", &boostWhad_X, "boostWhad_X/D");
-    outTree_->Branch("boostWhad_Y", &boostWhad_Y, "boostWhad_Y/D");
-    outTree_->Branch("boostWhad_Z", &boostWhad_Z, "boostWhad_Z/D");
+      outTree_->Branch("boostWhad_X", &boostWhad_X, "boostWhad_X/D");
+      outTree_->Branch("boostWhad_Y", &boostWhad_Y, "boostWhad_Y/D");
+      outTree_->Branch("boostWhad_Z", &boostWhad_Z, "boostWhad_Z/D");
 
-    outTree_->Branch("xdotx", &xdotx, "xdotx/D");
-    outTree_->Branch("xdoty", &xdoty, "xdoty/D");
-    outTree_->Branch("xdotz", &xdotz, "xdotz/D");
+      outTree_->Branch("xdotx", &xdotx, "xdotx/D");
+      outTree_->Branch("xdoty", &xdoty, "xdoty/D");
+      outTree_->Branch("xdotz", &xdotz, "xdotz/D");
 
-    outTree_->Branch("ydotx", &ydotx, "ydotx/D");
-    outTree_->Branch("ydoty", &ydoty, "ydoty/D");
-    outTree_->Branch("ydotz", &ydotz, "ydotz/D");
+      outTree_->Branch("ydotx", &ydotx, "ydotx/D");
+      outTree_->Branch("ydoty", &ydoty, "ydoty/D");
+      outTree_->Branch("ydotz", &ydotz, "ydotz/D");
 
-    outTree_->Branch("zdotx", &zdotx, "zdotx/D");
-    outTree_->Branch("zdoty", &zdoty, "zdoty/D");
-    outTree_->Branch("zdotz", &zdotz, "zdotz/D");
+      outTree_->Branch("zdotx", &zdotx, "zdotx/D");
+      outTree_->Branch("zdoty", &zdoty, "zdoty/D");
+      outTree_->Branch("zdotz", &zdotz, "zdotz/D");
 
-    outTree_->Branch("lepton1WWframe_UX", &lepton1WWframe_UX, "lepton1WWframe_UX/D");
-    outTree_->Branch("lepton1WWframe_UY", &lepton1WWframe_UY, "lepton1WWframe_UY/D");
-    outTree_->Branch("lepton1WWframe_UZ", &lepton1WWframe_UZ, "lepton1WWframe_UZ/D");
+      outTree_->Branch("lepton1WWframe_UX", &lepton1WWframe_UX, "lepton1WWframe_UX/D");
+      outTree_->Branch("lepton1WWframe_UY", &lepton1WWframe_UY, "lepton1WWframe_UY/D");
+      outTree_->Branch("lepton1WWframe_UZ", &lepton1WWframe_UZ, "lepton1WWframe_UZ/D");
    
-    outTree_->Branch("lepton_sumWWframe_UX", &lepton_sumWWframe_UX, "lepton_sumWWframe_UX/D");
-    outTree_->Branch("lepton_sumWWframe_UY", &lepton_sumWWframe_UY, "lepton_sumWWframe_UY/D");
-    outTree_->Branch("lepton_sumWWframe_UZ", &lepton_sumWWframe_UZ, "lepton_sumWWframe_UZ/D");
+      outTree_->Branch("lepton_sumWWframe_UX", &lepton_sumWWframe_UX, "lepton_sumWWframe_UX/D");
+      outTree_->Branch("lepton_sumWWframe_UY", &lepton_sumWWframe_UY, "lepton_sumWWframe_UY/D");
+      outTree_->Branch("lepton_sumWWframe_UZ", &lepton_sumWWframe_UZ, "lepton_sumWWframe_UZ/D");
 
-    /////////////////////////////////////////////////////////////////////////////////////////////
+      /////////////////////////////////////////////////////////////////////////////////////////////
   
-    outTree_->Branch("leptons_in_lep_px_good", &leptons_in_lep_px_good, "leptons_in_lep_px_good/I");
-    outTree_->Branch("leptons_in_lep_py_good", &leptons_in_lep_py_good, "leptons_in_lep_py_good/I");
-    outTree_->Branch("leptons_in_lep_pz_good", &leptons_in_lep_pz_good, "leptons_in_lep_pz_good/I");
+      outTree_->Branch("leptons_in_lep_px_good", &leptons_in_lep_px_good, "leptons_in_lep_px_good/I");
+      outTree_->Branch("leptons_in_lep_py_good", &leptons_in_lep_py_good, "leptons_in_lep_py_good/I");
+      outTree_->Branch("leptons_in_lep_pz_good", &leptons_in_lep_pz_good, "leptons_in_lep_pz_good/I");
   
-    outTree_->Branch("partons_in_lep_px_good", &partons_in_lep_px_good, "partons_in_lep_px_good/I");
-    outTree_->Branch("partons_in_lep_py_good", &partons_in_lep_py_good, "partons_in_lep_py_good/I");
-    outTree_->Branch("partons_in_lep_pz_good", &partons_in_lep_pz_good, "partons_in_lep_pz_good/I");
+      outTree_->Branch("partons_in_lep_px_good", &partons_in_lep_px_good, "partons_in_lep_px_good/I");
+      outTree_->Branch("partons_in_lep_py_good", &partons_in_lep_py_good, "partons_in_lep_py_good/I");
+      outTree_->Branch("partons_in_lep_pz_good", &partons_in_lep_pz_good, "partons_in_lep_pz_good/I");
   
-    outTree_->Branch("parton1_in_lep_px_good", &parton1_in_lep_px_good, "parton1_in_lep_px_good/I");
-    outTree_->Branch("parton1_in_lep_py_good", &parton1_in_lep_py_good, "parton1_in_lep_py_good/I"); 
-    outTree_->Branch("parton1_in_lep_pz_good", &parton1_in_lep_pz_good, "parton1_in_lep_pz_good/I");
+      outTree_->Branch("parton1_in_lep_px_good", &parton1_in_lep_px_good, "parton1_in_lep_px_good/I");
+      outTree_->Branch("parton1_in_lep_py_good", &parton1_in_lep_py_good, "parton1_in_lep_py_good/I"); 
+      outTree_->Branch("parton1_in_lep_pz_good", &parton1_in_lep_pz_good, "parton1_in_lep_pz_good/I");
 
-    outTree_->Branch("parton2_in_lep_px_good", &parton2_in_lep_px_good, "parton2_in_lep_px_good/I");
-    outTree_->Branch("parton2_in_lep_py_good", &parton2_in_lep_py_good, "parton2_in_lep_py_good/I");
-    outTree_->Branch("parton2_in_lep_pz_good", &parton2_in_lep_pz_good, "parton2_in_lep_pz_good/I");
+      outTree_->Branch("parton2_in_lep_px_good", &parton2_in_lep_px_good, "parton2_in_lep_px_good/I");
+      outTree_->Branch("parton2_in_lep_py_good", &parton2_in_lep_py_good, "parton2_in_lep_py_good/I");
+      outTree_->Branch("parton2_in_lep_pz_good", &parton2_in_lep_pz_good, "parton2_in_lep_pz_good/I");
   
-    outTree_->Branch("lepton1_in_lep_px_good", &lepton1_in_lep_px_good, "lepton1_in_lep_px_good/I");
-    outTree_->Branch("lepton1_in_lep_py_good", &lepton1_in_lep_py_good, "lepton1_in_lep_py_good/I");
-    outTree_->Branch("lepton1_in_lep_pz_good", &lepton1_in_lep_pz_good, "lepton1_in_lep_pz_good/I");
+      outTree_->Branch("lepton1_in_lep_px_good", &lepton1_in_lep_px_good, "lepton1_in_lep_px_good/I");
+      outTree_->Branch("lepton1_in_lep_py_good", &lepton1_in_lep_py_good, "lepton1_in_lep_py_good/I");
+      outTree_->Branch("lepton1_in_lep_pz_good", &lepton1_in_lep_pz_good, "lepton1_in_lep_pz_good/I");
   
-    //outTree_->Branch("lepton1_dotted_x_good", &lepton1_dotted_x_good, "lepton1_dotted_x_good/I");
-    //outTree_->Branch("lepton1_dotted_y_good", &lepton1_dotted_y_good, "lepton1_dotted_y_good/I");
-    //outTree_->Branch("lepton1_dotted_z_good", &lepton1_dotted_z_good, "lepton1_dotted_z_good/I");
+      //outTree_->Branch("lepton1_dotted_x_good", &lepton1_dotted_x_good, "lepton1_dotted_x_good/I");
+      //outTree_->Branch("lepton1_dotted_y_good", &lepton1_dotted_y_good, "lepton1_dotted_y_good/I");
+      //outTree_->Branch("lepton1_dotted_z_good", &lepton1_dotted_z_good, "lepton1_dotted_z_good/I");
   
-    outTree_->Branch("leptons_in_had_px_good", &leptons_in_had_px_good, "leptons_in_had_px_good/I");
-    outTree_->Branch("leptons_in_had_py_good", &leptons_in_had_py_good, "leptons_in_had_py_good/I");
-    outTree_->Branch("leptons_in_had_pz_good", &leptons_in_had_pz_good, "leptons_in_had_pz_good/I");
+      outTree_->Branch("leptons_in_had_px_good", &leptons_in_had_px_good, "leptons_in_had_px_good/I");
+      outTree_->Branch("leptons_in_had_py_good", &leptons_in_had_py_good, "leptons_in_had_py_good/I");
+      outTree_->Branch("leptons_in_had_pz_good", &leptons_in_had_pz_good, "leptons_in_had_pz_good/I");
   
-    outTree_->Branch("lepton1_in_had_px_good", &lepton1_in_had_px_good, "lepton1_in_had_px_good/I");
-    outTree_->Branch("lepton1_in_had_py_good", &lepton1_in_had_py_good, "lepton1_in_had_py_good/I");
-    outTree_->Branch("lepton1_in_had_pz_good", &lepton1_in_had_pz_good, "lepton1_in_had_pz_good/I");
+      outTree_->Branch("lepton1_in_had_px_good", &lepton1_in_had_px_good, "lepton1_in_had_px_good/I");
+      outTree_->Branch("lepton1_in_had_py_good", &lepton1_in_had_py_good, "lepton1_in_had_py_good/I");
+      outTree_->Branch("lepton1_in_had_pz_good", &lepton1_in_had_pz_good, "lepton1_in_had_pz_good/I");
   
-    outTree_->Branch("lepton2_in_had_px_good", &lepton2_in_had_px_good, "lepton2_in_had_px_good/I");
-    outTree_->Branch("lepton2_in_had_py_good", &lepton2_in_had_py_good, "lepton2_in_had_py_good/I");
-    outTree_->Branch("lepton2_in_had_pz_good", &lepton2_in_had_pz_good, "lepton2_in_had_pz_good/I");
+      outTree_->Branch("lepton2_in_had_px_good", &lepton2_in_had_px_good, "lepton2_in_had_px_good/I");
+      outTree_->Branch("lepton2_in_had_py_good", &lepton2_in_had_py_good, "lepton2_in_had_py_good/I");
+      outTree_->Branch("lepton2_in_had_pz_good", &lepton2_in_had_pz_good, "lepton2_in_had_pz_good/I");
   
-    outTree_->Branch("parton1_in_had_px_good", &parton1_in_had_px_good, "parton1_in_had_px_good/I");
-    outTree_->Branch("parton1_in_had_py_good", &parton1_in_had_py_good, "parton1_in_had_py_good/I");
-    outTree_->Branch("parton1_in_had_pz_good", &parton1_in_had_pz_good, "parton1_in_had_pz_good/I");
+      outTree_->Branch("parton1_in_had_px_good", &parton1_in_had_px_good, "parton1_in_had_px_good/I");
+      outTree_->Branch("parton1_in_had_py_good", &parton1_in_had_py_good, "parton1_in_had_py_good/I");
+      outTree_->Branch("parton1_in_had_pz_good", &parton1_in_had_pz_good, "parton1_in_had_pz_good/I");
   
-    //outTree_->Branch("parton1_dotted_x_good", &parton1_dotted_x_good, "parton1_dotted_x_good/I");
-    //outTree_->Branch("parton1_dotted_y_good", &parton1_dotted_y_good, "parton1_dotted_y_good/I");
-    //outTree_->Branch("parton1_dotted_z_good", &parton1_dotted_z_good, "parton1_dotted_z_good/I");
+      //outTree_->Branch("parton1_dotted_x_good", &parton1_dotted_x_good, "parton1_dotted_x_good/I");
+      //outTree_->Branch("parton1_dotted_y_good", &parton1_dotted_y_good, "parton1_dotted_y_good/I");
+      //outTree_->Branch("parton1_dotted_z_good", &parton1_dotted_z_good, "parton1_dotted_z_good/I");
   
-    //outTree_->Branch("complicated1_px_good", &complicated1_px_good, "complicated1_px_good/I");
-    //outTree_->Branch("complicated1_py_good", &complicated1_py_good, "complicated1_py_good/I");
-    //outTree_->Branch("complicated1_pz_good", &complicated1_pz_good, "complicated1_pz_good/I");
+      //outTree_->Branch("complicated1_px_good", &complicated1_px_good, "complicated1_px_good/I");
+      //outTree_->Branch("complicated1_py_good", &complicated1_py_good, "complicated1_py_good/I");
+      //outTree_->Branch("complicated1_pz_good", &complicated1_pz_good, "complicated1_pz_good/I");
   
-    //outTree_->Branch("complicated2_px_good", &complicated2_px_good, "complicated2_px_good/I");
-    //outTree_->Branch("complicated2_py_good", &complicated2_py_good, "complicated2_py_good/I");
-    //outTree_->Branch("complicated2_pz_good", &complicated2_pz_good, "complicated2_pz_good/I");
+      //outTree_->Branch("complicated2_px_good", &complicated2_px_good, "complicated2_px_good/I");
+      //outTree_->Branch("complicated2_py_good", &complicated2_py_good, "complicated2_py_good/I");
+      //outTree_->Branch("complicated2_pz_good", &complicated2_pz_good, "complicated2_pz_good/I");
   
-    outTree_->Branch("lepton_sumWWframe_X_good", &lepton_sumWWframe_X_good, "lepton_sumWWframe_X_good/I");
-    outTree_->Branch("lepton_sumWWframe_Y_good", &lepton_sumWWframe_Y_good, "lepton_sumWWframe_Y_good/I");
-    outTree_->Branch("lepton_sumWWframe_Z_good", &lepton_sumWWframe_Z_good, "lepton_sumWWframe_Z_good/I");
+      outTree_->Branch("lepton_sumWWframe_X_good", &lepton_sumWWframe_X_good, "lepton_sumWWframe_X_good/I");
+      outTree_->Branch("lepton_sumWWframe_Y_good", &lepton_sumWWframe_Y_good, "lepton_sumWWframe_Y_good/I");
+      outTree_->Branch("lepton_sumWWframe_Z_good", &lepton_sumWWframe_Z_good, "lepton_sumWWframe_Z_good/I");
   
-    outTree_->Branch("parton_sumWWframe_X_good", &parton_sumWWframe_X_good, "parton_sumWWframe_X_good/I");
-    outTree_->Branch("parton_sumWWframe_Y_good", &parton_sumWWframe_Y_good, "parton_sumWWframe_Y_good/I");
-    outTree_->Branch("parton_sumWWframe_Z_good", &parton_sumWWframe_Z_good, "parton_sumWWframe_Z_good/I");
+      outTree_->Branch("parton_sumWWframe_X_good", &parton_sumWWframe_X_good, "parton_sumWWframe_X_good/I");
+      outTree_->Branch("parton_sumWWframe_Y_good", &parton_sumWWframe_Y_good, "parton_sumWWframe_Y_good/I");
+      outTree_->Branch("parton_sumWWframe_Z_good", &parton_sumWWframe_Z_good, "parton_sumWWframe_Z_good/I");
   
-    outTree_->Branch("lepton1WWframe_X_good", &lepton1WWframe_X_good, "lepton1WWframe_X_good/I");
-    outTree_->Branch("lepton1WWframe_Y_good", &lepton1WWframe_Y_good, "lepton1WWframe_Y_good/I");
-    outTree_->Branch("lepton1WWframe_Z_good", &lepton1WWframe_Z_good, "lepton1WWframe_Z_good/I");
+      outTree_->Branch("lepton1WWframe_X_good", &lepton1WWframe_X_good, "lepton1WWframe_X_good/I");
+      outTree_->Branch("lepton1WWframe_Y_good", &lepton1WWframe_Y_good, "lepton1WWframe_Y_good/I");
+      outTree_->Branch("lepton1WWframe_Z_good", &lepton1WWframe_Z_good, "lepton1WWframe_Z_good/I");
   
-    outTree_->Branch("parton1WWframe_X_good", &parton1WWframe_X_good, "parton1WWframe_X_good/I");
-    outTree_->Branch("parton1WWframe_Y_good", &parton1WWframe_Y_good, "parton1WWframe_Y_good/I");
-    outTree_->Branch("parton1WWframe_Z_good", &parton1WWframe_Z_good, "parton1WWframe_Z_good/I");
+      outTree_->Branch("parton1WWframe_X_good", &parton1WWframe_X_good, "parton1WWframe_X_good/I");
+      outTree_->Branch("parton1WWframe_Y_good", &parton1WWframe_Y_good, "parton1WWframe_Y_good/I");
+      outTree_->Branch("parton1WWframe_Z_good", &parton1WWframe_Z_good, "parton1WWframe_Z_good/I");
 
-    //outTree_->Branch("boostWWframe_X_good", &boostWWframe_X_good, "boostWWframe_X_good/I");
-    //outTree_->Branch("boostWWframe_Y_good", &boostWWframe_Y_good, "boostWWframe_Y_good/I");
-    //outTree_->Branch("boostWWframe_Z_good", &boostWWframe_Z_good, "boostWWframe_Z_good/I");
+      //outTree_->Branch("boostWWframe_X_good", &boostWWframe_X_good, "boostWWframe_X_good/I");
+      //outTree_->Branch("boostWWframe_Y_good", &boostWWframe_Y_good, "boostWWframe_Y_good/I");
+      //outTree_->Branch("boostWWframe_Z_good", &boostWWframe_Z_good, "boostWWframe_Z_good/I");
   
-    //outTree_->Branch("boostWlep_X_good", &boostWlep_X_good, "boostWlep_X_good/I");
-    //outTree_->Branch("boostWlep_Y_good", &boostWlep_Y_good, "boostWlep_Y_good/I");
-    //outTree_->Branch("boostWlep_Z_good", &boostWlep_Z_good, "boostWlep_Z_good/I");
+      //outTree_->Branch("boostWlep_X_good", &boostWlep_X_good, "boostWlep_X_good/I");
+      //outTree_->Branch("boostWlep_Y_good", &boostWlep_Y_good, "boostWlep_Y_good/I");
+      //outTree_->Branch("boostWlep_Z_good", &boostWlep_Z_good, "boostWlep_Z_good/I");
   
-    //outTree_->Branch("boostWhad_X_good", &boostWhad_X_good, "boostWhad_X_good/I");
-    //outTree_->Branch("boostWhad_Y_good", &boostWhad_Y_good, "boostWhad_Y_good/I");
-    //outTree_->Branch("boostWhad_Z_good", &boostWhad_Z_good, "boostWhad_Z_good/I");
+      //outTree_->Branch("boostWhad_X_good", &boostWhad_X_good, "boostWhad_X_good/I");
+      //outTree_->Branch("boostWhad_Y_good", &boostWhad_Y_good, "boostWhad_Y_good/I");
+      //outTree_->Branch("boostWhad_Z_good", &boostWhad_Z_good, "boostWhad_Z_good/I");
 #endif
-  }
+    }
 
- if (isSignal) {
-  outTree_ -> Branch("aTGCWeights",  &aTGCWeights);
-  outTree_ -> Branch("refXsec", &refXsec, "refXsec/D");
-  }
+  if (isSignal)
+    {
+      outTree_ -> Branch("aTGCWeights",  &aTGCWeights);
+      outTree_ -> Branch("refXsec", &refXsec, "refXsec/D");
+    }
   aTGCWeightUnitConv=1;
 
 }
@@ -1417,17 +1427,18 @@ TreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    njets_JECUp = 0;
    njets_JECDown = 0;
    edm::Handle<edm::View<pat::Jet> > AK4JetsSmearedUp, AK4JetsSmearedDown, AK4JetsShiftedUp, AK4JetsShiftedDown;
-   if(isMC) {
-     iEvent.getByToken(AK4JetsSmearedUpToken_, AK4JetsSmearedUp);
-     njets_JERUp = AK4JetsSmearedUp->size();
-     iEvent.getByToken(AK4JetsSmearedDownToken_, AK4JetsSmearedDown);
-     njets_JERDown = AK4JetsSmearedDown->size();
+   if(isMC)
+     {
+       iEvent.getByToken(AK4JetsSmearedUpToken_, AK4JetsSmearedUp);
+       njets_JERUp = AK4JetsSmearedUp->size();
+       iEvent.getByToken(AK4JetsSmearedDownToken_, AK4JetsSmearedDown);
+       njets_JERDown = AK4JetsSmearedDown->size();
 
-     iEvent.getByToken(AK4JetsShiftedUpToken_, AK4JetsShiftedUp);
-     njets_JECUp = AK4JetsShiftedUp->size();
-     iEvent.getByToken(AK4JetsShiftedDownToken_, AK4JetsShiftedDown);
-     njets_JECDown = AK4JetsShiftedDown->size();
-   }
+       iEvent.getByToken(AK4JetsShiftedUpToken_, AK4JetsShiftedUp);
+       njets_JECUp = AK4JetsShiftedUp->size();
+       iEvent.getByToken(AK4JetsShiftedDownToken_, AK4JetsShiftedDown);
+       njets_JECDown = AK4JetsShiftedDown->size();
+     }
    
    //MET
    edm::Handle<edm::View<pat::MET> > metHandle;
@@ -1448,193 +1459,210 @@ TreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    std::map<std::string, math::XYZTLorentzVector>  SystMap; 
    std::map<std::string, math::XYZTLorentzVector>  LeptonSystMap;
    std::map<std::string, math::XYZTLorentzVector>  MetSystMap;
-   if (isMC) {
-      SystMap = SystematicsHelper_.getWLepSystematicsLoretzVectors(iEvent);
-      LeptonSystMap = SystematicsHelper_.getLeptonSystematicsLoretzVectors(iEvent);
-      MetSystMap = SystematicsHelper_.getMetSystematicsLoretzVectors(iEvent);
-   }
+   if (isMC)
+     {
+       SystMap = SystematicsHelper_.getWLepSystematicsLoretzVectors(iEvent);
+       LeptonSystMap = SystematicsHelper_.getLeptonSystematicsLoretzVectors(iEvent);
+       MetSystMap = SystematicsHelper_.getMetSystematicsLoretzVectors(iEvent);
+     }
 
    nPV = vertices->size();
    
    edm::Handle<std::vector< PileupSummaryInfo > >  PUInfo;
    edm::Handle <GenEventInfoProduct> genInfo; 
    
-  if (isMC) {
-    iEvent.getByToken(PUInfoToken_, PUInfo);
-    std::vector<PileupSummaryInfo>::const_iterator PVI;
-    float Tnpv = -1;
-    for(PVI = PUInfo->begin(); PVI != PUInfo->end(); ++PVI) {
-     int BX = PVI->getBunchCrossing();
-     if(BX == 0) { 
-       Tnpv = PVI->getTrueNumInteractions();
-       continue;
-     }
+   if (isMC)
+     {
+       iEvent.getByToken(PUInfoToken_, PUInfo);
+       std::vector<PileupSummaryInfo>::const_iterator PVI;
+       float Tnpv = -1;
+       for(PVI = PUInfo->begin(); PVI != PUInfo->end(); ++PVI)
+	 {
+	   int BX = PVI->getBunchCrossing();
+	   if(BX == 0)
+	     { 
+	       Tnpv = PVI->getTrueNumInteractions();
+	       continue;
+	     }
 
-    }
-    gnPV=Tnpv;
-    PUweight = LumiWeights_.weight( Tnpv );
+	 }
+       gnPV=Tnpv;
+       PUweight = LumiWeights_.weight( Tnpv );
 
-   iEvent.getByToken( genInfoToken , genInfo);
-   genWeight = (genInfo -> weight());
-   //btag weights
-   if (njets > 0) {
-     btagWeight =  BTagHelper_.getEventWeight(AK4Jets);
-     if (btagWeight != btagWeight) {
-      std::cout << "Event: " << nevent << " LS: " << lumi << std::endl;
-      throw std::runtime_error("Inf/NaN btagWeight for event ");
-     }
-     btagWeight_BTagUp =  BTagHelper_.getEventWeight(AK4Jets, UP, BTAG);
-     btagWeight_BTagDown =  BTagHelper_.getEventWeight(AK4Jets, DOWN, BTAG);
-     btagWeight_MistagUp =  BTagHelper_.getEventWeight(AK4Jets, UP, MISTAG);
-     btagWeight_MistagDown =  BTagHelper_.getEventWeight(AK4Jets, DOWN, MISTAG);
-   }
-   else {
-    btagWeight = 1.;
-    btagWeight_BTagUp = 1.;
-    btagWeight_BTagDown = 1.;
-    btagWeight_MistagUp = 1.;
-    btagWeight_MistagDown = 1.;
-   }
+       iEvent.getByToken( genInfoToken , genInfo);
+       genWeight = (genInfo -> weight());
+       //btag weights
+       if (njets > 0)
+	 {
+	   btagWeight =  BTagHelper_.getEventWeight(AK4Jets);
+	   if (btagWeight != btagWeight)
+	     {
+	       std::cout << "Event: " << nevent << " LS: " << lumi << std::endl;
+	       throw std::runtime_error("Inf/NaN btagWeight for event ");
+	     }
+	   btagWeight_BTagUp =  BTagHelper_.getEventWeight(AK4Jets, UP, BTAG);
+	   btagWeight_BTagDown =  BTagHelper_.getEventWeight(AK4Jets, DOWN, BTAG);
+	   btagWeight_MistagUp =  BTagHelper_.getEventWeight(AK4Jets, UP, MISTAG);
+	   btagWeight_MistagDown =  BTagHelper_.getEventWeight(AK4Jets, DOWN, MISTAG);
+	 }
+       else
+	 {
+	   btagWeight = 1.;
+	   btagWeight_BTagUp = 1.;
+	   btagWeight_BTagDown = 1.;
+	   btagWeight_MistagUp = 1.;
+	   btagWeight_MistagDown = 1.;
+	 }
 
-   // L1 Prefiring weights
-   //edm::Handle< double > theprefweight;
-   //iEvent.getByToken(prefweight_token, theprefweight ) ;
-   //prefiringWeight =(*theprefweight);
+       // L1 Prefiring weights
+       //edm::Handle< double > theprefweight;
+       //iEvent.getByToken(prefweight_token, theprefweight ) ;
+       //prefiringWeight =(*theprefweight);
 
-   //PDF uncertainties
-   edm::Handle<LHEEventProduct> LHEevtProductExternal;
-   iEvent.getByToken(LHEEventProductTokenExternal, LHEevtProductExternal);
-   range PDFRange = PDFVariationMap.at(NominalPDF);
-   if(isSignal) PDFRange = PDFVariationMap.at(NominalPDF/100);
+       //PDF uncertainties
+       edm::Handle<LHEEventProduct> LHEevtProductExternal;
+       iEvent.getByToken(LHEEventProductTokenExternal, LHEevtProductExternal);
+       range PDFRange = PDFVariationMap.at(NominalPDF);
+       if(isSignal) PDFRange = PDFVariationMap.at(NominalPDF/100);
    
-   //define number of PDF variations 
-   unsigned int NPDFs = PDFRange.high - PDFRange.low + 1;
-   PDFWeights.clear();
-   ScaleWeights.clear();
-   PDFWeights.resize(NPDFs);
-   ScaleWeights.resize(9);
+       //define number of PDF variations 
+       unsigned int NPDFs = PDFRange.high - PDFRange.low + 1;
+       PDFWeights.clear();
+       ScaleWeights.clear();
+       PDFWeights.resize(NPDFs);
+       ScaleWeights.resize(9);
 
-   unsigned int iPDF_ID = PDFRange.low;
-   //if there are no weights for PDF uncertainties just fill with ones, that's the case for tW single top  sample
-   if (LHEevtProductExternal->weights().size() == 0 ) std::fill(PDFWeights.begin(), PDFWeights.end(), 1.);
-   for (unsigned int i=0; i<LHEevtProductExternal->weights().size(); i++) {
-    if (iPDF_ID > PDFRange.high) break;
-    if (LHEevtProductExternal->weights()[i].id == std::to_string(iPDF_ID)){
-      unsigned int iPDF = iPDF_ID - PDFRange.low;
-      PDFWeights.at(iPDF) = (LHEevtProductExternal->weights()[i].wgt)/LHEevtProductExternal->originalXWGTUP();
-      iPDF_ID++;
+       unsigned int iPDF_ID = PDFRange.low;
+       //if there are no weights for PDF uncertainties just fill with ones, that's the case for tW single top  sample
+       if (LHEevtProductExternal->weights().size() == 0 ) std::fill(PDFWeights.begin(), PDFWeights.end(), 1.);
+       for (unsigned int i=0; i<LHEevtProductExternal->weights().size(); i++)
+	 {
+	   if (iPDF_ID > PDFRange.high) break;
+	   if (LHEevtProductExternal->weights()[i].id == std::to_string(iPDF_ID))
+	     {
+	       unsigned int iPDF = iPDF_ID - PDFRange.low;
+	       PDFWeights.at(iPDF) = (LHEevtProductExternal->weights()[i].wgt)/LHEevtProductExternal->originalXWGTUP();
+	       iPDF_ID++;
+	     }
+	 }	
+
+       //scale variation uncertainties
+       range RangeOfScaleVariation;
+       if (NominalPDF == 263000 ) RangeOfScaleVariation = range(1,9);
+       else RangeOfScaleVariation = range(1001, 1009);
+
+       //if there are no weights for scale uncertainties just fill with ones, that's the case for tW single top  sample
+       if (LHEevtProductExternal->weights().size() == 0 ) std::fill(ScaleWeights.begin(), ScaleWeights.end(), 1.);
+
+       unsigned int iScale_ID = RangeOfScaleVariation.low;
+       for (unsigned int i=0; i<LHEevtProductExternal->weights().size(); i++)
+	 {
+	   if (iScale_ID > RangeOfScaleVariation.high) break;
+	   if (LHEevtProductExternal->weights()[i].id == std::to_string(iScale_ID))
+	     {
+	       unsigned int iScale = iScale_ID - RangeOfScaleVariation.low;
+	       ScaleWeights.at(iScale) = (LHEevtProductExternal->weights()[i].wgt)/LHEevtProductExternal->originalXWGTUP();
+	       iScale_ID++;
+	     }
+	 }
+
+
+       if(isSignal)
+	 {
+	   aTGCWeights.clear();
+	   refXsec = LHEevtProductExternal -> originalXWGTUP();
+	   int weightNumber = 1;
+	   if( LHEevtProductExternal->weights().size() )
+	     {
+	       aTGCWeightUnitConv=genWeight/(LHEevtProductExternal->weights().at(0).wgt);
+	       for ( unsigned int iwgt = 0; iwgt < LHEevtProductExternal->weights().size(); ++iwgt )
+		 {
+		   const LHEEventProduct::WGT& wgt = LHEevtProductExternal->weights().at(iwgt);
+		   if( boost::algorithm::contains(wgt.id, "rwgt_" + std::to_string(weightNumber)))
+		     {
+		       aTGCWeights.push_back(wgt.wgt);
+		       weightNumber ++;
+		     }
+		 }
+	     }
+	 }
+
+       ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > Wplus_p4 = genWLorentzVector(genParticles, 1);
+       ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > Wminus_p4 = genWLorentzVector(genParticles, -1);
+       Wplus_gen_pt = Wplus_p4.Pt();
+       Wplus_gen_eta = Wplus_p4.Eta();
+       Wplus_gen_phi = Wplus_p4.Phi();
+       Wplus_gen_mass = Wplus_p4.M();
+
+       Wminus_gen_pt = Wminus_p4.Pt();
+       Wminus_gen_eta = Wminus_p4.Eta();
+       Wminus_gen_phi = Wminus_p4.Phi();
+       Wminus_gen_mass = Wminus_p4.M();
      }
-   }	
 
-   //scale variation uncertainties
-   range RangeOfScaleVariation;
-   if (NominalPDF == 263000 ) RangeOfScaleVariation = range(1,9);
-   else RangeOfScaleVariation = range(1001, 1009);
+   // Store generator level vector boson pT and diboson mass
+   genPtV=0;
+   genMWV=0;
+   if(isMC)
+     {
+       // Scan the list of gen particles, isolate the starting W or Z, identify the hadronically decaying one and store its pt.
+       for(unsigned int iGen=0; iGen<genParticles->size(); ++iGen)
+	 {
+	   const reco::Candidate & p= genParticles->at(iGen);
+	   /*std::cout<<p.pdgId()<<" "<<p.status();
+	     genHadronicVp4.SetPt(p.pt());
+	     genHadronicVp4.SetEta(p.eta());
+	     genHadronicVp4.SetPhi(p.phi());
+	     genHadronicVp4.SetM(p.mass());
+	     std::cout<<" "<<genHadronicVp4.px()<<" "<<genHadronicVp4.py()<<" "<<genHadronicVp4.pz()<<" "<<genHadronicVp4.e()<<" "<<genHadronicVp4.M()<<std::endl;*/
+	   if((fabs(p.pdgId())==23 || fabs(p.pdgId())==24) && p.status()==22)
+	     {
+	       if(decaysHadronic(&p))
+		 {
+		   genPtV=p.pt();
 
-   //if there are no weights for scale uncertainties just fill with ones, that's the case for tW single top  sample
-   if (LHEevtProductExternal->weights().size() == 0 ) std::fill(ScaleWeights.begin(), ScaleWeights.end(), 1.);
-
-   unsigned int iScale_ID = RangeOfScaleVariation.low;
-   for (unsigned int i=0; i<LHEevtProductExternal->weights().size(); i++) {
-    if (iScale_ID > RangeOfScaleVariation.high) break;
-    if (LHEevtProductExternal->weights()[i].id == std::to_string(iScale_ID)){
-      unsigned int iScale = iScale_ID - RangeOfScaleVariation.low;
-      ScaleWeights.at(iScale) = (LHEevtProductExternal->weights()[i].wgt)/LHEevtProductExternal->originalXWGTUP();
-      iScale_ID++;
+		   genHadronicVp4.SetPt(p.pt());
+		   genHadronicVp4.SetEta(p.eta());
+		   genHadronicVp4.SetPhi(p.phi());
+		   genHadronicVp4.SetM(p.mass());
+		   //std::cout<<"*Hadronically decaying W* "<<genHadronicVp4.px()<<" "<<genHadronicVp4.py()<<" "<<genHadronicVp4.pz()<<" "<<genHadronicVp4.e()<<" "<<genHadronicVp4.M()<<std::endl;
+		 }
+	       else
+		 {
+		   genLeptonicVp4.SetPt(p.pt());
+		   genLeptonicVp4.SetEta(p.eta());
+		   genLeptonicVp4.SetPhi(p.phi());
+		   genLeptonicVp4.SetM(p.mass());
+		   //std::cout<<"*Leptonically decaying W* "<<genLeptonicVp4.px()<<" "<<genLeptonicVp4.py()<<" "<<genLeptonicVp4.pz()<<" "<<genLeptonicVp4.e()<<" "<<genLeptonicVp4.M()<<std::endl;
+		 }
+	     }
+	 }
+       genDibosonp4=genHadronicVp4+genLeptonicVp4;
+       genMWV=genDibosonp4.M();
+       //std::cout<<"Diboson mass: "<<genMWV<<std::endl<<std::endl;
      }
-   }
 
-
-   if(isSignal){
-    aTGCWeights.clear();
-    refXsec = LHEevtProductExternal -> originalXWGTUP();
-    int weightNumber = 1;
-    if( LHEevtProductExternal->weights().size() ) {
-      aTGCWeightUnitConv=genWeight/(LHEevtProductExternal->weights().at(0).wgt);
-      for ( unsigned int iwgt = 0; iwgt < LHEevtProductExternal->weights().size(); ++iwgt ) {
-        const LHEEventProduct::WGT& wgt = LHEevtProductExternal->weights().at(iwgt);
-        if( boost::algorithm::contains(wgt.id, "rwgt_" + std::to_string(weightNumber))){
-         aTGCWeights.push_back(wgt.wgt);
-         weightNumber ++;
-       }
-      }
-    }
-   }
-
-   ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > Wplus_p4 = genWLorentzVector(genParticles, 1);
-   ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > Wminus_p4 = genWLorentzVector(genParticles, -1);
-   Wplus_gen_pt = Wplus_p4.Pt();
-   Wplus_gen_eta = Wplus_p4.Eta();
-   Wplus_gen_phi = Wplus_p4.Phi();
-   Wplus_gen_mass = Wplus_p4.M();
-
-   Wminus_gen_pt = Wminus_p4.Pt();
-   Wminus_gen_eta = Wminus_p4.Eta();
-   Wminus_gen_phi = Wminus_p4.Phi();
-   Wminus_gen_mass = Wminus_p4.M();
-  }
-
-  // Store generator level vector boson pT and diboson mass
-  genPtV=0;
-  genMWV=0;
-  if(isMC)
-  {
-  // Scan the list of gen particles, isolate the starting W or Z, identify the hadronically decaying one and store its pt.
-  for(unsigned int iGen=0; iGen<genParticles->size(); ++iGen)
-  {
-	const reco::Candidate & p= genParticles->at(iGen);
-	/*std::cout<<p.pdgId()<<" "<<p.status();
-	genHadronicVp4.SetPt(p.pt());
-        genHadronicVp4.SetEta(p.eta());
-        genHadronicVp4.SetPhi(p.phi());
-        genHadronicVp4.SetM(p.mass());
-	std::cout<<" "<<genHadronicVp4.px()<<" "<<genHadronicVp4.py()<<" "<<genHadronicVp4.pz()<<" "<<genHadronicVp4.e()<<" "<<genHadronicVp4.M()<<std::endl;*/
-	if((fabs(p.pdgId())==23 || fabs(p.pdgId())==24) && p.status()==22)
-	{
-		if(decaysHadronic(&p))
-		{
-			genPtV=p.pt();
-
-			genHadronicVp4.SetPt(p.pt());
-			genHadronicVp4.SetEta(p.eta());
-			genHadronicVp4.SetPhi(p.phi());
-			genHadronicVp4.SetM(p.mass());
-			//std::cout<<"*Hadronically decaying W* "<<genHadronicVp4.px()<<" "<<genHadronicVp4.py()<<" "<<genHadronicVp4.pz()<<" "<<genHadronicVp4.e()<<" "<<genHadronicVp4.M()<<std::endl;
-		}
-		else
-		{
-			genLeptonicVp4.SetPt(p.pt());
-			genLeptonicVp4.SetEta(p.eta());
-			genLeptonicVp4.SetPhi(p.phi());
-			genLeptonicVp4.SetM(p.mass());
-			//std::cout<<"*Leptonically decaying W* "<<genLeptonicVp4.px()<<" "<<genLeptonicVp4.py()<<" "<<genLeptonicVp4.pz()<<" "<<genLeptonicVp4.e()<<" "<<genLeptonicVp4.M()<<std::endl;
-		}
-	}
-  }
-  genDibosonp4=genHadronicVp4+genLeptonicVp4;
-  genMWV=genDibosonp4.M();
-  //std::cout<<"Diboson mass: "<<genMWV<<std::endl<<std::endl;
-  }
-
-  if (isMC && jecUnc == nullptr) {
-    // Only have to initialise once
-    edm::ESHandle<JetCorrectorParametersCollection> JetCorParCollAK8;
-    iSetup.get<JetCorrectionsRecord>().get("AK8PFchs",JetCorParCollAK8);
-    JetCorrectorParameters const & JetCorPar = (*JetCorParCollAK8)["Uncertainty"];
-    jecUnc = new JetCorrectionUncertainty(JetCorPar);
-  }
-  JECunc = 0.;
+   if (isMC && jecUnc == nullptr)
+     {
+       // Only have to initialise once
+       edm::ESHandle<JetCorrectorParametersCollection> JetCorParCollAK8;
+       iSetup.get<JetCorrectionsRecord>().get("AK8PFchs",JetCorParCollAK8);
+       JetCorrectorParameters const & JetCorPar = (*JetCorParCollAK8)["Uncertainty"];
+       jecUnc = new JetCorrectionUncertainty(JetCorPar);
+     }
+   JECunc = 0.;
 
    //  Defining decay channel on the gen level
    N_had_Wgen  = 0, N_lep_Wgen = 0 ;
 
-   if (isMC) {
-    DefineDecayChannel(genParticles, N_lep_Wgen , N_had_Wgen );
-    if (N_lep_Wgen == 0 && N_had_Wgen == 2  ) WDecayClass = Hadronic;
-    else if (N_lep_Wgen == 1 && N_had_Wgen == 1 ) WDecayClass = Semileptonic;
-    else if (N_lep_Wgen == 2 && N_had_Wgen == 0 ) WDecayClass = Leptonic;
-    else WDecayClass = UnDefined;
-  }
+   if (isMC)
+     {
+       DefineDecayChannel(genParticles, N_lep_Wgen , N_had_Wgen );
+       if (N_lep_Wgen == 0 && N_had_Wgen == 2  ) WDecayClass = Hadronic;
+       else if (N_lep_Wgen == 1 && N_had_Wgen == 1 ) WDecayClass = Semileptonic;
+       else if (N_lep_Wgen == 2 && N_had_Wgen == 0 ) WDecayClass = Leptonic;
+       else WDecayClass = UnDefined;
+     }
 
    N_lep_W = leptonicVs -> size();
    
@@ -1647,605 +1675,622 @@ TreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   
    //electron channel
    if ( ( leptons -> size() ) > 0)
-   {
-    auto leptonPtr = leptons -> ptrAt(0);
-    reco::MuonPtr asmuonPtr(leptonPtr);
-    reco::ElectronPtr aselectronPtr(leptonPtr);
-     if (channel == "mu"){
-      Lepton.pt =  asmuonPtr -> tunePMuonBestTrack() -> pt();
-      Lepton.eta = asmuonPtr -> tunePMuonBestTrack() -> eta();
-      Lepton.phi = asmuonPtr -> tunePMuonBestTrack() -> phi();
-    }
-    else if (channel == "el"){
-      Lepton.pt = (leptons -> at(0)).pt();
-      Lepton.eta = (leptons -> at(0)).eta();
-      Lepton.phi = (leptons -> at(0)).phi();
-      reco::SuperClusterRef  superCluster = aselectronPtr->superCluster();
-      sc_eta = superCluster->eta();
-      sc_et = (superCluster -> energy())* sin((aselectronPtr->superClusterPosition()).theta());
-      const reco::CaloClusterPtr& seed = aselectronPtr -> superCluster()->seed();
-      isEB = ( seed->seed().subdetId() == EcalBarrel );
-    }
-    if (isMC){
-       Lepton.pt_LeptonEnUp = LeptonSystMap.at("LeptonEnUp").Pt();
-       Lepton.pt_LeptonEnDown = LeptonSystMap.at("LeptonEnDown").Pt();
-       Lepton.pt_LeptonResUp = LeptonSystMap.at("LeptonResUp").Pt();
-       Lepton.pt_LeptonResDown = LeptonSystMap.at("LeptonResDown").Pt();
-    }
-   }
+     {
+       auto leptonPtr = leptons -> ptrAt(0);
+       reco::MuonPtr asmuonPtr(leptonPtr);
+       reco::ElectronPtr aselectronPtr(leptonPtr);
+       if (channel == "mu")
+	 {
+	 Lepton.pt =  asmuonPtr -> tunePMuonBestTrack() -> pt();
+	 Lepton.eta = asmuonPtr -> tunePMuonBestTrack() -> eta();
+	 Lepton.phi = asmuonPtr -> tunePMuonBestTrack() -> phi();
+	 }
+       else if (channel == "el")
+	 {
+	   Lepton.pt = (leptons -> at(0)).pt();
+	   Lepton.eta = (leptons -> at(0)).eta();
+	   Lepton.phi = (leptons -> at(0)).phi();
+	   reco::SuperClusterRef  superCluster = aselectronPtr->superCluster();
+	   sc_eta = superCluster->eta();
+	   sc_et = (superCluster -> energy())* sin((aselectronPtr->superClusterPosition()).theta());
+	   const reco::CaloClusterPtr& seed = aselectronPtr -> superCluster()->seed();
+	   isEB = ( seed->seed().subdetId() == EcalBarrel );
+	 }
+       if (isMC)
+	 {
+	   Lepton.pt_LeptonEnUp = LeptonSystMap.at("LeptonEnUp").Pt();
+	   Lepton.pt_LeptonEnDown = LeptonSystMap.at("LeptonEnDown").Pt();
+	   Lepton.pt_LeptonResUp = LeptonSystMap.at("LeptonResUp").Pt();
+	   Lepton.pt_LeptonResDown = LeptonSystMap.at("LeptonResDown").Pt();
+	 }
+     }
    else
-   {
-     Lepton.pt = -99.;
-     Lepton.eta = -99.;
-     Lepton.phi = -99.;
-     Lepton.pt_LeptonEnUp = -99.;
-     Lepton.pt_LeptonEnDown = -99.;
-     Lepton.pt_LeptonResUp = -99.;
-     Lepton.pt_LeptonResDown = -99.;
-   }
+     {
+       Lepton.pt = -99.;
+       Lepton.eta = -99.;
+       Lepton.phi = -99.;
+       Lepton.pt_LeptonEnUp = -99.;
+       Lepton.pt_LeptonEnDown = -99.;
+       Lepton.pt_LeptonResUp = -99.;
+       Lepton.pt_LeptonResDown = -99.;
+     }
 
-   if (channel == "mu"){
-      // Muon scale factors apply cuts on their nVtx
-      int goodNPV = 0;
-      for (const auto & itr : *vertices) {
-        if (fabs(itr.z()) <= 25 && itr.ndof() > 4 && fabs(itr.position().rho()) <= 2 && !itr.isFake()) {
-          goodNPV++;
-        }
-      }
+   if (channel == "mu")
+     {
+       // Muon scale factors apply cuts on their nVtx
+       int goodNPV = 0;
+       for (const auto & itr : *vertices)
+	 {if (fabs(itr.z()) <= 25 && itr.ndof() > 4 && fabs(itr.position().rho()) <= 2 && !itr.isFake()){goodNPV++;}}
 
-      LeptonSF = MuonScaleFactor_.getScaleFactor(Lepton.pt, std::abs(Lepton.eta), Lepton.phi, goodNPV);
-      LeptonSF_Up = MuonScaleFactor_.getScaleFactor(Lepton.pt, std::abs(Lepton.eta), Lepton.phi, goodNPV, "up");
-      LeptonSF_Down = MuonScaleFactor_.getScaleFactor(Lepton.pt, std::abs(Lepton.eta), Lepton.phi, goodNPV, "down");
-    }
-   else if (channel == "el") {
-      LeptonSF = ElectronScaleFactor_.getScaleFactor(Lepton.pt, Lepton.eta, sc_eta, Lepton.phi, nPV);
-      LeptonSF_Up = ElectronScaleFactor_.getScaleFactor(Lepton.pt, Lepton.eta, sc_eta, Lepton.phi, nPV, "up");
-      LeptonSF_Down = ElectronScaleFactor_.getScaleFactor(Lepton.pt, Lepton.eta, sc_eta, Lepton.phi, nPV, "down");
-    }
+       LeptonSF = MuonScaleFactor_.getScaleFactor(Lepton.pt, std::abs(Lepton.eta), Lepton.phi, goodNPV);
+       LeptonSF_Up = MuonScaleFactor_.getScaleFactor(Lepton.pt, std::abs(Lepton.eta), Lepton.phi, goodNPV, "up");
+       LeptonSF_Down = MuonScaleFactor_.getScaleFactor(Lepton.pt, std::abs(Lepton.eta), Lepton.phi, goodNPV, "down");
+     }
+   else if (channel == "el")
+     {
+       LeptonSF = ElectronScaleFactor_.getScaleFactor(Lepton.pt, Lepton.eta, sc_eta, Lepton.phi, nPV);
+       LeptonSF_Up = ElectronScaleFactor_.getScaleFactor(Lepton.pt, Lepton.eta, sc_eta, Lepton.phi, nPV, "up");
+       LeptonSF_Down = ElectronScaleFactor_.getScaleFactor(Lepton.pt, Lepton.eta, sc_eta, Lepton.phi, nPV, "down");
+     }
    //leptonically decaying W
    if (leptonicVs -> size() > 0)
-   {
-      const reco::Candidate  & leptonicV = leptonicVs->at(0);   
-      Wboson_lep.pt = leptonicV.pt();
-      Wboson_lep.eta = leptonicV.eta();
-      Wboson_lep.phi = leptonicV.phi();
-      Wboson_lep.mass = leptonicV.mass();
-      Wboson_lep.mt = leptonicV.mt();
-      Wboson_lep.charge = leptonicV.charge();
-      if (isMC){
-        //pt
-        Wboson_lep.pt_LeptonEnUp = SystMap.at("LeptonEnUp").Pt();
-        Wboson_lep.pt_LeptonEnDown = SystMap.at("LeptonEnDown").Pt();
-        Wboson_lep.pt_LeptonResUp = SystMap.at("LeptonResUp").Pt();
-        Wboson_lep.pt_LeptonResDown = SystMap.at("LeptonResDown").Pt();
-        Wboson_lep.pt_JECUp = SystMap.at("JetEnUp").Pt();
-        Wboson_lep.pt_JECDown = SystMap.at("JetEnDown").Pt();
-        Wboson_lep.pt_UnclEnUp = SystMap.at("UnclusteredEnUp").Pt();
-        Wboson_lep.pt_UnclEnDown = SystMap.at("UnclusteredEnDown").Pt();
+     {
+       const reco::Candidate  & leptonicV = leptonicVs->at(0);   
+       Wboson_lep.pt = leptonicV.pt();
+       Wboson_lep.eta = leptonicV.eta();
+       Wboson_lep.phi = leptonicV.phi();
+       Wboson_lep.mass = leptonicV.mass();
+       Wboson_lep.mt = leptonicV.mt();
+       Wboson_lep.charge = leptonicV.charge();
+       if (isMC)
+	 {
+	   //pt
+	   Wboson_lep.pt_LeptonEnUp = SystMap.at("LeptonEnUp").Pt();
+	   Wboson_lep.pt_LeptonEnDown = SystMap.at("LeptonEnDown").Pt();
+	   Wboson_lep.pt_LeptonResUp = SystMap.at("LeptonResUp").Pt();
+	   Wboson_lep.pt_LeptonResDown = SystMap.at("LeptonResDown").Pt();
+	   Wboson_lep.pt_JECUp = SystMap.at("JetEnUp").Pt();
+	   Wboson_lep.pt_JECDown = SystMap.at("JetEnDown").Pt();
+	   Wboson_lep.pt_UnclEnUp = SystMap.at("UnclusteredEnUp").Pt();
+	   Wboson_lep.pt_UnclEnDown = SystMap.at("UnclusteredEnDown").Pt();
 
-        //mass
-        Wboson_lep.mass_LeptonEnUp = SystMap.at("LeptonEnUp").M();
-        Wboson_lep.mass_LeptonEnDown = SystMap.at("LeptonEnDown").M();
-        Wboson_lep.mass_LeptonResUp = SystMap.at("LeptonResUp").M();
-        Wboson_lep.mass_LeptonResDown = SystMap.at("LeptonResDown").M();
-        Wboson_lep.mass_JECUp = SystMap.at("JetEnUp").M();
-        Wboson_lep.mass_JECDown = SystMap.at("JetEnDown").M();
-        Wboson_lep.mass_UnclEnUp = SystMap.at("UnclusteredEnUp").M();
-        Wboson_lep.mass_UnclEnDown = SystMap.at("UnclusteredEnDown").M();
+	   //mass
+	   Wboson_lep.mass_LeptonEnUp = SystMap.at("LeptonEnUp").M();
+	   Wboson_lep.mass_LeptonEnDown = SystMap.at("LeptonEnDown").M();
+	   Wboson_lep.mass_LeptonResUp = SystMap.at("LeptonResUp").M();
+	   Wboson_lep.mass_LeptonResDown = SystMap.at("LeptonResDown").M();
+	   Wboson_lep.mass_JECUp = SystMap.at("JetEnUp").M();
+	   Wboson_lep.mass_JECDown = SystMap.at("JetEnDown").M();
+	   Wboson_lep.mass_UnclEnUp = SystMap.at("UnclusteredEnUp").M();
+	   Wboson_lep.mass_UnclEnDown = SystMap.at("UnclusteredEnDown").M();
 
 
-        //mt
-        Wboson_lep.mt_LeptonEnUp = SystMap.at("LeptonEnUp").Mt();
-        Wboson_lep.mt_LeptonEnDown = SystMap.at("LeptonEnDown").Mt();
-        Wboson_lep.mt_LeptonResUp = SystMap.at("LeptonResUp").Mt();
-        Wboson_lep.mt_LeptonResDown = SystMap.at("LeptonResDown").Mt();
-        Wboson_lep.mt_JECUp = SystMap.at("JetEnUp").Mt();
-        Wboson_lep.mt_JECDown = SystMap.at("JetEnDown").Mt();
-        Wboson_lep.mt_UnclEnUp = SystMap.at("UnclusteredEnUp").Mt();
-        Wboson_lep.mt_UnclEnDown = SystMap.at("UnclusteredEnDown").Mt();
+	   //mt
+	   Wboson_lep.mt_LeptonEnUp = SystMap.at("LeptonEnUp").Mt();
+	   Wboson_lep.mt_LeptonEnDown = SystMap.at("LeptonEnDown").Mt();
+	   Wboson_lep.mt_LeptonResUp = SystMap.at("LeptonResUp").Mt();
+	   Wboson_lep.mt_LeptonResDown = SystMap.at("LeptonResDown").Mt();
+	   Wboson_lep.mt_JECUp = SystMap.at("JetEnUp").Mt();
+	   Wboson_lep.mt_JECDown = SystMap.at("JetEnDown").Mt();
+	   Wboson_lep.mt_UnclEnUp = SystMap.at("UnclusteredEnUp").Mt();
+	   Wboson_lep.mt_UnclEnDown = SystMap.at("UnclusteredEnDown").Mt();
 
-      }
-  }
+	 }
+     }
   
-  else 
-   {
-      Wboson_lep.pt = -99.;
-      Wboson_lep.eta = -99.;
-      Wboson_lep.phi = -99.;
-      Wboson_lep.mass = -99.;
-      Wboson_lep.mt = -99.;
-      Wboson_lep.charge = -99.;
-      if (isMC){
-        //pt
-        Wboson_lep.pt_LeptonEnUp = -99.;
-        Wboson_lep.pt_LeptonEnDown = -99.;
-        Wboson_lep.pt_LeptonResUp = -99.;
-        Wboson_lep.pt_LeptonResDown = -99.;
-        Wboson_lep.pt_JECUp = -99.;
-        Wboson_lep.pt_JECDown = -99.;
-        Wboson_lep.pt_UnclEnUp = -99.;
-        Wboson_lep.pt_UnclEnDown = -99.;
+   else 
+     {
+       Wboson_lep.pt = -99.;
+       Wboson_lep.eta = -99.;
+       Wboson_lep.phi = -99.;
+       Wboson_lep.mass = -99.;
+       Wboson_lep.mt = -99.;
+       Wboson_lep.charge = -99.;
+       if (isMC)
+	 {
+	   //pt
+	   Wboson_lep.pt_LeptonEnUp = -99.;
+	   Wboson_lep.pt_LeptonEnDown = -99.;
+	   Wboson_lep.pt_LeptonResUp = -99.;
+	   Wboson_lep.pt_LeptonResDown = -99.;
+	   Wboson_lep.pt_JECUp = -99.;
+	   Wboson_lep.pt_JECDown = -99.;
+	   Wboson_lep.pt_UnclEnUp = -99.;
+	   Wboson_lep.pt_UnclEnDown = -99.;
 
-        //mass
-        Wboson_lep.mass_LeptonEnUp = -99.;
-        Wboson_lep.mass_LeptonEnDown = -99.;
-        Wboson_lep.mass_LeptonResUp = -99.;
-        Wboson_lep.mass_LeptonResDown = -99.;
-        Wboson_lep.mass_JECUp = -99.;
-        Wboson_lep.mass_JECDown = -99.;
-        Wboson_lep.mass_UnclEnUp = -99.;
-        Wboson_lep.mass_UnclEnDown = -99.;
+	   //mass
+	   Wboson_lep.mass_LeptonEnUp = -99.;
+	   Wboson_lep.mass_LeptonEnDown = -99.;
+	   Wboson_lep.mass_LeptonResUp = -99.;
+	   Wboson_lep.mass_LeptonResDown = -99.;
+	   Wboson_lep.mass_JECUp = -99.;
+	   Wboson_lep.mass_JECDown = -99.;
+	   Wboson_lep.mass_UnclEnUp = -99.;
+	   Wboson_lep.mass_UnclEnDown = -99.;
 
-        //mt 
+	   //mt 
 
-        Wboson_lep.mt_LeptonEnUp = -99.;
-        Wboson_lep.mt_LeptonEnDown = -99.;
-        Wboson_lep.mt_LeptonResUp = -99.;
-        Wboson_lep.mt_LeptonResDown = -99.;
-        Wboson_lep.mt_JECUp = -99.;
-        Wboson_lep.mt_JECDown = -99.;
-        Wboson_lep.mt_UnclEnUp = -99.;
-        Wboson_lep.mt_UnclEnDown = -99.;
+	   Wboson_lep.mt_LeptonEnUp = -99.;
+	   Wboson_lep.mt_LeptonEnDown = -99.;
+	   Wboson_lep.mt_LeptonResUp = -99.;
+	   Wboson_lep.mt_LeptonResDown = -99.;
+	   Wboson_lep.mt_JECUp = -99.;
+	   Wboson_lep.mt_JECDown = -99.;
+	   Wboson_lep.mt_UnclEnUp = -99.;
+	   Wboson_lep.mt_UnclEnDown = -99.;
 
 
-      }
-  }
+	 }
+     }
   
-    //MET quantities
+   //MET quantities
    if (metHandle->size() > 0)
-   {
-      const pat::MET& metCand = metHandle->at(0);
+     {
+       const pat::MET& metCand = metHandle->at(0);
 
-      METCand.pt = metCand.pt();
-      METCand.phi = metCand.phi();
+       METCand.pt = metCand.pt();
+       METCand.phi = metCand.phi();
 
-      //MET uncertainties
-      if (isMC){
-        // MET uncertainties
-        MET_LeptonEnUp = MetSystMap.at("LeptonEnUp").Pt();
-        MET_LeptonEnDown = MetSystMap.at("LeptonEnDown").Pt();
-        MET_JECUp = MetSystMap.at("JetEnUp").Pt();
-        MET_JECDown = MetSystMap.at("JetEnDown").Pt();
-        MET_JERUp = MetSystMap.at("JetResUp").Pt();
-        MET_JERDown = MetSystMap.at("JetResDown").Pt();
-        MET_UnclEnUp = MetSystMap.at("UnclusteredEnUp").Pt();
-        MET_UnclEnDown = MetSystMap.at("UnclusteredEnDown").Pt();
+       //MET uncertainties
+       if (isMC)
+	 {
+	   // MET uncertainties
+	   MET_LeptonEnUp = MetSystMap.at("LeptonEnUp").Pt();
+	   MET_LeptonEnDown = MetSystMap.at("LeptonEnDown").Pt();
+	   MET_JECUp = MetSystMap.at("JetEnUp").Pt();
+	   MET_JECDown = MetSystMap.at("JetEnDown").Pt();
+	   MET_JERUp = MetSystMap.at("JetResUp").Pt();
+	   MET_JERDown = MetSystMap.at("JetResDown").Pt();
+	   MET_UnclEnUp = MetSystMap.at("UnclusteredEnUp").Pt();
+	   MET_UnclEnDown = MetSystMap.at("UnclusteredEnDown").Pt();
 
-        //MET phi uncertainties
-        MET_Phi_LeptonEnUp = MetSystMap.at("LeptonEnUp").Phi();
-        MET_Phi_LeptonEnDown = MetSystMap.at("LeptonEnDown").Phi();
-        MET_Phi_JECUp = MetSystMap.at("JetEnUp").Phi();
-        MET_Phi_JECDown = MetSystMap.at("JetEnDown").Phi();
-        MET_Phi_JERUp = MetSystMap.at("JetResUp").Phi();
-        MET_Phi_JERDown = MetSystMap.at("JetResDown").Phi();
-        MET_Phi_UnclEnUp = MetSystMap.at("UnclusteredEnUp").Phi();
-        MET_Phi_UnclEnDown = MetSystMap.at("UnclusteredEnDown").Phi();
-      }
-   }
+	   //MET phi uncertainties
+	   MET_Phi_LeptonEnUp = MetSystMap.at("LeptonEnUp").Phi();
+	   MET_Phi_LeptonEnDown = MetSystMap.at("LeptonEnDown").Phi();
+	   MET_Phi_JECUp = MetSystMap.at("JetEnUp").Phi();
+	   MET_Phi_JECDown = MetSystMap.at("JetEnDown").Phi();
+	   MET_Phi_JERUp = MetSystMap.at("JetResUp").Phi();
+	   MET_Phi_JERDown = MetSystMap.at("JetResDown").Phi();
+	   MET_Phi_UnclEnUp = MetSystMap.at("UnclusteredEnUp").Phi();
+	   MET_Phi_UnclEnDown = MetSystMap.at("UnclusteredEnDown").Phi();
+	 }
+     }
    else
-   {
-      METCand.pt = -99.;
-      METCand.phi = -99.;
+     {
+       METCand.pt = -99.;
+       METCand.phi = -99.;
 
-      //MET uncertainties
+       //MET uncertainties
        //METUncl
-      MET_UnclEnUp = -99. ;
-      MET_UnclEnUp = -99.;
-      //JER
-      MET_JERUp = -99.;
-      MET_JERDown = -99. ;
-      //JEC
-      MET_JECUp = -99. ;
-      MET_JECDown = -99. ;
-      //Lepton energy 
-      MET_LeptonEnUp = -99.;
-      MET_LeptonEnDown = -99. ;
+       MET_UnclEnUp = -99. ;
+       MET_UnclEnUp = -99.;
+       //JER
+       MET_JERUp = -99.;
+       MET_JERDown = -99. ;
+       //JEC
+       MET_JECUp = -99. ;
+       MET_JECDown = -99. ;
+       //Lepton energy 
+       MET_LeptonEnUp = -99.;
+       MET_LeptonEnDown = -99. ;
 
-      //MET phi uncertainties
+       //MET phi uncertainties
        //METUncl
-      MET_Phi_UnclEnUp = -99. ;
-      MET_Phi_UnclEnUp = -99.;
-      //JER
-      MET_Phi_JERUp = -99.;
-      MET_Phi_JERDown = -99. ;
-      //JEC
-      MET_Phi_JECUp = -99. ;
-      MET_Phi_JECDown = -99. ;
-      //Lepton energy 
-      MET_Phi_LeptonEnUp = -99.;
-      MET_Phi_LeptonEnDown = -99. ;
+       MET_Phi_UnclEnUp = -99. ;
+       MET_Phi_UnclEnUp = -99.;
+       //JER
+       MET_Phi_JERUp = -99.;
+       MET_Phi_JERDown = -99. ;
+       //JEC
+       MET_Phi_JECUp = -99. ;
+       MET_Phi_JECDown = -99. ;
+       //Lepton energy 
+       MET_Phi_LeptonEnUp = -99.;
+       MET_Phi_LeptonEnDown = -99. ;
       
-   }
+     }
    
-    if (jets -> size() > 0 && leptonicVs -> size() > 0)
-    {
-      deltaR_LeptonWJet = deltaR(Lepton.eta,Lepton.phi,(jets -> at(0)).eta(), (jets -> at(0)).phi()); 
-      deltaPhi_LeptonMet = deltaPhi(Lepton.phi, METCand.phi);
-      deltaPhi_WJetMet = deltaPhi(jets->at(0).phi(), METCand.phi);
-      deltaPhi_WJetWlep = deltaPhi(jets->at(0).phi(), Wboson_lep.phi);
-      if (isMC){
-        //Unclustered energy
-        deltaPhi_LeptonMet_UnclEnUp = deltaPhi(Lepton.phi, MET_Phi_UnclEnUp);
-        deltaPhi_LeptonMet_UnclEnDown = deltaPhi(Lepton.phi, MET_Phi_UnclEnDown);
-        //JEC
-        deltaPhi_LeptonMet_JECUp = deltaPhi(Lepton.phi, MET_Phi_JECUp);
-        deltaPhi_LeptonMet_JECDown = deltaPhi(Lepton.phi, MET_Phi_JECDown);
-        //lepton energy scale
-        deltaPhi_LeptonMet_LeptonEnUp = deltaPhi(Lepton.phi, MET_Phi_LeptonEnUp);
-        deltaPhi_LeptonMet_LeptonEnDown = deltaPhi(Lepton.phi, MET_Phi_LeptonEnDown);
-        //JER
-        deltaPhi_LeptonMet_JERUp = deltaPhi(Lepton.phi, MET_Phi_JERUp);
-        deltaPhi_LeptonMet_JERDown = deltaPhi(Lepton.phi, MET_Phi_JERDown);
+   if (jets -> size() > 0 && leptonicVs -> size() > 0)
+     {
+       deltaR_LeptonWJet = deltaR(Lepton.eta,Lepton.phi,(jets -> at(0)).eta(), (jets -> at(0)).phi()); 
+       deltaPhi_LeptonMet = deltaPhi(Lepton.phi, METCand.phi);
+       deltaPhi_WJetMet = deltaPhi(jets->at(0).phi(), METCand.phi);
+       deltaPhi_WJetWlep = deltaPhi(jets->at(0).phi(), Wboson_lep.phi);
+       if (isMC)
+	 {
+	   //Unclustered energy
+	   deltaPhi_LeptonMet_UnclEnUp = deltaPhi(Lepton.phi, MET_Phi_UnclEnUp);
+	   deltaPhi_LeptonMet_UnclEnDown = deltaPhi(Lepton.phi, MET_Phi_UnclEnDown);
+	   //JEC
+	   deltaPhi_LeptonMet_JECUp = deltaPhi(Lepton.phi, MET_Phi_JECUp);
+	   deltaPhi_LeptonMet_JECDown = deltaPhi(Lepton.phi, MET_Phi_JECDown);
+	   //lepton energy scale
+	   deltaPhi_LeptonMet_LeptonEnUp = deltaPhi(Lepton.phi, MET_Phi_LeptonEnUp);
+	   deltaPhi_LeptonMet_LeptonEnDown = deltaPhi(Lepton.phi, MET_Phi_LeptonEnDown);
+	   //JER
+	   deltaPhi_LeptonMet_JERUp = deltaPhi(Lepton.phi, MET_Phi_JERUp);
+	   deltaPhi_LeptonMet_JERDown = deltaPhi(Lepton.phi, MET_Phi_JERDown);
 
-        //////////////////////
-        //Unclustered energy
-        deltaPhi_WJetMet_UnclEnUp = deltaPhi(jets->at(0).phi(), MET_Phi_UnclEnUp);
-        deltaPhi_WJetMet_UnclEnDown = deltaPhi(jets->at(0).phi(), MET_Phi_UnclEnDown);
-        //JEC
-        deltaPhi_WJetMet_JECUp = deltaPhi(jets->at(0).phi(), MET_Phi_JECUp);
-        deltaPhi_WJetMet_JECDown = deltaPhi(jets->at(0).phi(), MET_Phi_JECDown);
-        //lepton energy scale
-        deltaPhi_WJetMet_LeptonEnUp = deltaPhi(jets->at(0).phi(), MET_Phi_LeptonEnUp);
-        deltaPhi_WJetMet_LeptonEnDown = deltaPhi(jets->at(0).phi(), MET_Phi_LeptonEnDown);
-        //JER
-        deltaPhi_WJetMet_JERUp = deltaPhi(jets->at(0).phi(), MET_Phi_JERUp);
-        deltaPhi_WJetMet_JERDown = deltaPhi(jets->at(0).phi(), MET_Phi_JERDown);
+	   //////////////////////
+	   //Unclustered energy
+	   deltaPhi_WJetMet_UnclEnUp = deltaPhi(jets->at(0).phi(), MET_Phi_UnclEnUp);
+	   deltaPhi_WJetMet_UnclEnDown = deltaPhi(jets->at(0).phi(), MET_Phi_UnclEnDown);
+	   //JEC
+	   deltaPhi_WJetMet_JECUp = deltaPhi(jets->at(0).phi(), MET_Phi_JECUp);
+	   deltaPhi_WJetMet_JECDown = deltaPhi(jets->at(0).phi(), MET_Phi_JECDown);
+	   //lepton energy scale
+	   deltaPhi_WJetMet_LeptonEnUp = deltaPhi(jets->at(0).phi(), MET_Phi_LeptonEnUp);
+	   deltaPhi_WJetMet_LeptonEnDown = deltaPhi(jets->at(0).phi(), MET_Phi_LeptonEnDown);
+	   //JER
+	   deltaPhi_WJetMet_JERUp = deltaPhi(jets->at(0).phi(), MET_Phi_JERUp);
+	   deltaPhi_WJetMet_JERDown = deltaPhi(jets->at(0).phi(), MET_Phi_JERDown);
 
-        //////////////////////
-        //Unclustered energy
-        deltaPhi_WJetWlep_UnclEnUp = deltaPhi(jets->at(0).phi(), SystMap.at("UnclusteredEnUp").Phi());
-        deltaPhi_WJetWlep_UnclEnDown = deltaPhi(jets->at(0).phi(), SystMap.at("UnclusteredEnDown").Phi());
-        //JEC
-        deltaPhi_WJetWlep_JECUp = deltaPhi(jets->at(0).phi(), SystMap.at("JetEnUp").Phi());
-        deltaPhi_WJetWlep_JECDown = deltaPhi(jets->at(0).phi(), SystMap.at("JetEnDown").Phi());
-        //lepton energy scale
-        deltaPhi_WJetWlep_LeptonEnUp = deltaPhi(jets->at(0).phi(), SystMap.at("LeptonEnUp").Phi());
-        deltaPhi_WJetWlep_LeptonEnDown = deltaPhi(jets->at(0).phi(), SystMap.at("LeptonEnDown").Phi());
-
-
-      }
-    }
-    else 
-    {
-      deltaR_LeptonWJet = -99.; 
-      deltaPhi_LeptonMet = -99.;
-      deltaPhi_WJetMet = -99.;
-      deltaPhi_WJetWlep = -99.;
-
-      if (isMC){
-      //Unclustered energy
-        deltaPhi_LeptonMet_UnclEnUp = -99.;
-        deltaPhi_LeptonMet_UnclEnDown = -99.;
-        //JEC
-        deltaPhi_LeptonMet_JECUp = -99.;
-        deltaPhi_LeptonMet_JECDown = -99.;
-        //lepton energy scale
-        deltaPhi_LeptonMet_LeptonEnUp = -99.;
-        deltaPhi_LeptonMet_LeptonEnDown = -99.;
-        //JER
-        deltaPhi_LeptonMet_JERUp = -99.;
-        deltaPhi_LeptonMet_JERDown = -99.;
-        /////////////
-         //Unclustered energy
-        deltaPhi_WJetMet_UnclEnUp = -99.;
-        deltaPhi_WJetMet_UnclEnDown = -99.;
-        //JEC
-        deltaPhi_WJetMet_JECUp = -99.;
-        deltaPhi_WJetMet_JECDown = -99.;
-        //lepton energy scale
-        deltaPhi_WJetMet_LeptonEnUp = -99.;
-        deltaPhi_WJetMet_LeptonEnDown = -99.;
-        //JER
-        deltaPhi_WJetMet_JERUp = -99.;
-        deltaPhi_WJetMet_JERDown = -99.;
-
-         //////////////////////
-        //Unclustered energy
-        deltaPhi_WJetWlep_UnclEnUp = -99.;
-        deltaPhi_WJetWlep_UnclEnDown = -99.;
-        //JEC
-        deltaPhi_WJetWlep_JECUp = -99.;
-        deltaPhi_WJetWlep_JECDown = -99.;
-        //lepton energy scale
-        deltaPhi_WJetWlep_LeptonEnUp = -99.;
-        deltaPhi_WJetWlep_LeptonEnDown = -99.;
-      }
-
-    }
+	   //////////////////////
+	   //Unclustered energy
+	   deltaPhi_WJetWlep_UnclEnUp = deltaPhi(jets->at(0).phi(), SystMap.at("UnclusteredEnUp").Phi());
+	   deltaPhi_WJetWlep_UnclEnDown = deltaPhi(jets->at(0).phi(), SystMap.at("UnclusteredEnDown").Phi());
+	   //JEC
+	   deltaPhi_WJetWlep_JECUp = deltaPhi(jets->at(0).phi(), SystMap.at("JetEnUp").Phi());
+	   deltaPhi_WJetWlep_JECDown = deltaPhi(jets->at(0).phi(), SystMap.at("JetEnDown").Phi());
+	   //lepton energy scale
+	   deltaPhi_WJetWlep_LeptonEnUp = deltaPhi(jets->at(0).phi(), SystMap.at("LeptonEnUp").Phi());
+	   deltaPhi_WJetWlep_LeptonEnDown = deltaPhi(jets->at(0).phi(), SystMap.at("LeptonEnDown").Phi());
 
 
-  NAK8jet = jets -> size();
-  if(isMC) NAK8jet_smearedUp = jetsSmearedUp -> size();
-  if(isMC) NAK8jet_smearedDown = jetsSmearedDown -> size();
-  JetResolutionSmearer_.setRhoAndSeed(rho_, iEvent);
+	 }
+     }
+   else 
+     {
+       deltaR_LeptonWJet = -99.; 
+       deltaPhi_LeptonMet = -99.;
+       deltaPhi_WJetMet = -99.;
+       deltaPhi_WJetWlep = -99.;
 
-  // Different types because the pat::Jet returns math::XYZTLorentzVector (uses E not M)
-  // but for the SD ones we need to modify the mass, so need the M4D not E4D
-  math::XYZTLorentzVector smearedJetUp, smearedJetDown;
-  ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > smearedJetUp_SD, smearedJetDown_SD;
+       if (isMC)
+	 {
+	   //Unclustered energy
+	   deltaPhi_LeptonMet_UnclEnUp = -99.;
+	   deltaPhi_LeptonMet_UnclEnDown = -99.;
+	   //JEC
+	   deltaPhi_LeptonMet_JECUp = -99.;
+	   deltaPhi_LeptonMet_JECDown = -99.;
+	   //lepton energy scale
+	   deltaPhi_LeptonMet_LeptonEnUp = -99.;
+	   deltaPhi_LeptonMet_LeptonEnDown = -99.;
+	   //JER
+	   deltaPhi_LeptonMet_JERUp = -99.;
+	   deltaPhi_LeptonMet_JERDown = -99.;
+	   /////////////
+	   //Unclustered energy
+	   deltaPhi_WJetMet_UnclEnUp = -99.;
+	   deltaPhi_WJetMet_UnclEnDown = -99.;
+	   //JEC
+	   deltaPhi_WJetMet_JECUp = -99.;
+	   deltaPhi_WJetMet_JECDown = -99.;
+	   //lepton energy scale
+	   deltaPhi_WJetMet_LeptonEnUp = -99.;
+	   deltaPhi_WJetMet_LeptonEnDown = -99.;
+	   //JER
+	   deltaPhi_WJetMet_JERUp = -99.;
+	   deltaPhi_WJetMet_JERDown = -99.;
+
+	   //////////////////////
+	   //Unclustered energy
+	   deltaPhi_WJetWlep_UnclEnUp = -99.;
+	   deltaPhi_WJetWlep_UnclEnDown = -99.;
+	   //JEC
+	   deltaPhi_WJetWlep_JECUp = -99.;
+	   deltaPhi_WJetWlep_JECDown = -99.;
+	   //lepton energy scale
+	   deltaPhi_WJetWlep_LeptonEnUp = -99.;
+	   deltaPhi_WJetWlep_LeptonEnDown = -99.;
+	 }
+
+     }
+
+
+   NAK8jet = jets -> size();
+   if(isMC) NAK8jet_smearedUp = jetsSmearedUp -> size();
+   if(isMC) NAK8jet_smearedDown = jetsSmearedDown -> size();
+   JetResolutionSmearer_.setRhoAndSeed(rho_, iEvent);
+
+   // Different types because the pat::Jet returns math::XYZTLorentzVector (uses E not M)
+   // but for the SD ones we need to modify the mass, so need the M4D not E4D
+   math::XYZTLorentzVector smearedJetUp, smearedJetDown;
+   ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > smearedJetUp_SD, smearedJetDown_SD;
 
    if (jets -> size() > 0)
-  {
-    const pat::Jet & fatJet = jets->at(0);
-    jet_tau2tau1 = fatJet.userFloat("NjettinessAK8:tau2")/fatJet.userFloat("NjettinessAK8:tau1");
-    jet_tau3tau2 = fatJet.userFloat("NjettinessAK8:tau3")/fatJet.userFloat("NjettinessAK8:tau2");
-    jet_tau1 = fatJet.userFloat("NjettinessAK8:tau1");
-    jet_tau2 = fatJet.userFloat("NjettinessAK8:tau2");
-    jet_tau3 = fatJet.userFloat("NjettinessAK8:tau3");
-    // Need to manually apply correction factor to userFloat values - calculate by using
-    // ratio of corrected PT to uncorrected pt
-    double corr = fatJet.correctedP4(fatJet.currentJECLevel()).pt() / fatJet.correctedP4("Uncorrected").pt();
-    jet_mass_pruned = corr * fatJet.userFloat("ak8PFJetsCHSPrunedMass");
-    jet_mass_softdrop = corr * fatJet.userFloat("ak8PFJetsCHSSoftDropMass");
+     {
+       const pat::Jet & fatJet = jets->at(0);
+       jet_tau2tau1 = fatJet.userFloat("NjettinessAK8:tau2")/fatJet.userFloat("NjettinessAK8:tau1");
+       jet_tau3tau2 = fatJet.userFloat("NjettinessAK8:tau3")/fatJet.userFloat("NjettinessAK8:tau2");
+       jet_tau1 = fatJet.userFloat("NjettinessAK8:tau1");
+       jet_tau2 = fatJet.userFloat("NjettinessAK8:tau2");
+       jet_tau3 = fatJet.userFloat("NjettinessAK8:tau3");
+       // Need to manually apply correction factor to userFloat values - calculate by using
+       // ratio of corrected PT to uncorrected pt
+       double corr = fatJet.correctedP4(fatJet.currentJECLevel()).pt() / fatJet.correctedP4("Uncorrected").pt();
+       jet_mass_pruned = corr * fatJet.userFloat("ak8PFJetsCHSPrunedMass");
+       jet_mass_softdrop = corr * fatJet.userFloat("ak8PFJetsCHSSoftDropMass");
 
-    //https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD2016#Jets
-    // Do these require correction factor?
-    jet_pt_PUPPI = fatJet.userFloat("ak8PFJetsPuppiValueMap:pt");
-    jet_eta_PUPPI = fatJet.userFloat("ak8PFJetsPuppiValueMap:eta");
-    jet_phi_PUPPI = fatJet.userFloat("ak8PFJetsPuppiValueMap:phi");
-    jet_mass_PUPPI = fatJet.userFloat("ak8PFJetsPuppiValueMap:mass");
-    jet_tau1_PUPPI = fatJet.userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau1");
-    jet_tau2_PUPPI = fatJet.userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau2");
-    jet_tau3_PUPPI = fatJet.userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau3");
-    jet_tau21_PUPPI = jet_tau2_PUPPI/jet_tau1_PUPPI;
-    jet_tau32_PUPPI = jet_tau3_PUPPI/jet_tau2_PUPPI;
+       //https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD2016#Jets
+       // Do these require correction factor?
+       jet_pt_PUPPI = fatJet.userFloat("ak8PFJetsPuppiValueMap:pt");
+       jet_eta_PUPPI = fatJet.userFloat("ak8PFJetsPuppiValueMap:eta");
+       jet_phi_PUPPI = fatJet.userFloat("ak8PFJetsPuppiValueMap:phi");
+       jet_mass_PUPPI = fatJet.userFloat("ak8PFJetsPuppiValueMap:mass");
+       jet_tau1_PUPPI = fatJet.userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau1");
+       jet_tau2_PUPPI = fatJet.userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau2");
+       jet_tau3_PUPPI = fatJet.userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau3");
+       jet_tau21_PUPPI = jet_tau2_PUPPI/jet_tau1_PUPPI;
+       jet_tau32_PUPPI = jet_tau3_PUPPI/jet_tau2_PUPPI;
 
 
-    TLorentzVector puppi_softdrop,puppi_softdrop_subjet;
-    TLorentzVector zerothsubjet, firstsubjet;
-    number_of_subjets = 0;
-    auto const & sdSubjetsPuppi = fatJet.subjets("SoftDropPuppi");
-    for ( auto const & it : sdSubjetsPuppi )
-    {
-      puppi_softdrop_subjet.SetPtEtaPhiM(it->correctedP4(0).pt(),it->correctedP4(0).eta(),it->correctedP4(0).phi(),it->correctedP4(0).mass());
-      puppi_softdrop+=puppi_softdrop_subjet;
-      if (number_of_subjets == 0)
-	{
-	  zerothsubjet.SetPtEtaPhiM(it->correctedP4(0).pt(),it->correctedP4(0).eta(),it->correctedP4(0).phi(),it->correctedP4(0).mass());
-	  subjet0.pt = it->correctedP4(0).pt(); subjet0.eta = it->correctedP4(0).eta(); subjet0.phi = it->correctedP4(0).phi(); subjet0.mass = it->correctedP4(0).mass();
-	}
-      else if (number_of_subjets == 1)
-	{
-	  firstsubjet.SetPtEtaPhiM(it->correctedP4(0).pt(),it->correctedP4(0).eta(),it->correctedP4(0).phi(),it->correctedP4(0).mass());
-	  subjet1.pt = it->correctedP4(0).pt(); subjet1.eta = it->correctedP4(0).eta(); subjet1.phi = it->correctedP4(0).phi(); subjet1.mass = it->correctedP4(0).mass();
-	}
-      else std::cout << "More than two subjets counted.\n";
-      number_of_subjets++;
-    }
+       TLorentzVector puppi_softdrop,puppi_softdrop_subjet;
+       TLorentzVector zerothsubjet, firstsubjet;
+       number_of_subjets = 0;
+       auto const & sdSubjetsPuppi = fatJet.subjets("SoftDropPuppi");
+       for ( auto const & it : sdSubjetsPuppi )
+	 {
+	   puppi_softdrop_subjet.SetPtEtaPhiM(it->correctedP4(0).pt(),it->correctedP4(0).eta(),it->correctedP4(0).phi(),it->correctedP4(0).mass());
+	   puppi_softdrop+=puppi_softdrop_subjet;
+	   if (number_of_subjets == 0)
+	     {
+	       zerothsubjet.SetPtEtaPhiM(it->correctedP4(0).pt(),it->correctedP4(0).eta(),it->correctedP4(0).phi(),it->correctedP4(0).mass());
+	       subjet0.pt = it->correctedP4(0).pt(); subjet0.eta = it->correctedP4(0).eta(); subjet0.phi = it->correctedP4(0).phi(); subjet0.mass = it->correctedP4(0).mass();
+	     }
+	   else if (number_of_subjets == 1)
+	     {
+	       firstsubjet.SetPtEtaPhiM(it->correctedP4(0).pt(),it->correctedP4(0).eta(),it->correctedP4(0).phi(),it->correctedP4(0).mass());
+	       subjet1.pt = it->correctedP4(0).pt(); subjet1.eta = it->correctedP4(0).eta(); subjet1.phi = it->correctedP4(0).phi(); subjet1.mass = it->correctedP4(0).mass();
+	     }
+	   else std::cout << "More than two subjets counted.\n";
+	   number_of_subjets++;
+	 }
 
-    zerothsubjet_px = zerothsubjet.Px();
-    zerothsubjet_py = zerothsubjet.Py();
-    zerothsubjet_pz = zerothsubjet.Pz();
-    zerothsubjet_e  = zerothsubjet.E();
+       zerothsubjet_px = zerothsubjet.Px();
+       zerothsubjet_py = zerothsubjet.Py();
+       zerothsubjet_pz = zerothsubjet.Pz();
+       zerothsubjet_e  = zerothsubjet.E();
 
-    firstsubjet_px = firstsubjet.Px();
-    firstsubjet_py = firstsubjet.Py();
-    firstsubjet_pz = firstsubjet.Pz();
-    firstsubjet_e  = firstsubjet.E();
+       firstsubjet_px = firstsubjet.Px();
+       firstsubjet_py = firstsubjet.Py();
+       firstsubjet_pz = firstsubjet.Pz();
+       firstsubjet_e  = firstsubjet.E();
 
-    /////////////////////////////////////
+       /////////////////////////////////////
       
-    zerothsubjet_pt = zerothsubjet.Pt();
-    zerothsubjet_phi = zerothsubjet.Phi();
-    zerothsubjet_eta = zerothsubjet.Eta();
-    zerothsubjet_m  = zerothsubjet.M();
+       zerothsubjet_pt = zerothsubjet.Pt();
+       zerothsubjet_phi = zerothsubjet.Phi();
+       zerothsubjet_eta = zerothsubjet.Eta();
+       zerothsubjet_m  = zerothsubjet.M();
 
-    firstsubjet_pt = firstsubjet.Pt();
-    firstsubjet_phi = firstsubjet.Phi();
-    firstsubjet_eta = firstsubjet.Eta();
-    firstsubjet_m  = firstsubjet.M();
+       firstsubjet_pt = firstsubjet.Pt();
+       firstsubjet_phi = firstsubjet.Phi();
+       firstsubjet_eta = firstsubjet.Eta();
+       firstsubjet_m  = firstsubjet.M();
 
-    float puppiCorr= getPUPPIweight( jet_pt_PUPPI, jet_eta_PUPPI );
-    jet_mass_softdrop_PUPPI = puppi_softdrop.M() * puppiCorr;
-    jet_tau21_DT = jet_tau21_PUPPI + 0.063*std::log(jet_pt_PUPPI*jet_pt_PUPPI/jet_mass_PUPPI);
+       float puppiCorr= getPUPPIweight( jet_pt_PUPPI, jet_eta_PUPPI );
+       jet_mass_softdrop_PUPPI = puppi_softdrop.M() * puppiCorr;
+       jet_tau21_DT = jet_tau21_PUPPI + 0.063*std::log(jet_pt_PUPPI*jet_pt_PUPPI/jet_mass_PUPPI);
 
-    jet_pt = fatJet.pt();
-    jet_eta = fatJet.eta();
-    jet_phi = fatJet.phi();
-    jet_mass = fatJet.mass();
+       jet_pt = fatJet.pt();
+       jet_eta = fatJet.eta();
+       jet_phi = fatJet.phi();
+       jet_mass = fatJet.mass();
 
-    if(isMC)
-    {
-      isMatched_ = isMatchedToGenW(genParticles, fatJet);
+       if(isMC)
+	 {
+	   isMatched_ = isMatchedToGenW(genParticles, fatJet);
 
-      //JEC uncertainty
-      jecUnc->setJetEta(jet_eta);
-      jecUnc->setJetPt(jet_pt);  // must be corrected PT
-      JECunc = jecUnc->getUncertainty(true);
+	   //JEC uncertainty
+	   jecUnc->setJetEta(jet_eta);
+	   jecUnc->setJetPt(jet_pt);  // must be corrected PT
+	   JECunc = jecUnc->getUncertainty(true);
 
-      jet_pt_JECDown = (1 - JECunc)*jet_pt;
-      jet_pt_JECUp   = (1 + JECunc)*jet_pt;
-      jet_mass_JECDown = (1 - JECunc)*jet_mass;
-      jet_mass_JECUp   = (1 + JECunc)*jet_mass;
-      jet_mass_pruned_JECDown = (1 - JECunc)*jet_mass_pruned;
-      jet_mass_pruned_JECUp = (1 + JECunc)*jet_mass_pruned;
-      jet_mass_softdrop_JECDown = (1 - JECunc)*jet_mass_softdrop;
-      jet_mass_softdrop_JECUp = (1 + JECunc)*jet_mass_softdrop;
-      jet_mass_softdrop_PUPPI_JECDown = (1 - JECunc)*jet_mass_softdrop_PUPPI;
-      jet_mass_softdrop_PUPPI_JECUp = (1 + JECunc)*jet_mass_softdrop_PUPPI;
+	   jet_pt_JECDown = (1 - JECunc)*jet_pt;
+	   jet_pt_JECUp   = (1 + JECunc)*jet_pt;
+	   jet_mass_JECDown = (1 - JECunc)*jet_mass;
+	   jet_mass_JECUp   = (1 + JECunc)*jet_mass;
+	   jet_mass_pruned_JECDown = (1 - JECunc)*jet_mass_pruned;
+	   jet_mass_pruned_JECUp = (1 + JECunc)*jet_mass_pruned;
+	   jet_mass_softdrop_JECDown = (1 - JECunc)*jet_mass_softdrop;
+	   jet_mass_softdrop_JECUp = (1 + JECunc)*jet_mass_softdrop;
+	   jet_mass_softdrop_PUPPI_JECDown = (1 - JECunc)*jet_mass_softdrop_PUPPI;
+	   jet_mass_softdrop_PUPPI_JECUp = (1 + JECunc)*jet_mass_softdrop_PUPPI;
 
-      // Numbers taken from JetWTagging twiki
-      float mSDSF = 1.0;
-      float mSDSFUnc = 0.2;
-      float mSDResolutionAbs = 10.1;
-      float mSDResolutionRel = mSDResolutionAbs / 80.; // FIXME! Need better number than 80
+	   // Numbers taken from JetWTagging twiki
+	   float mSDSF = 1.0;
+	   float mSDSFUnc = 0.2;
+	   float mSDResolutionAbs = 10.1;
+	   float mSDResolutionRel = mSDResolutionAbs / 80.; // FIXME! Need better number than 80
 
-      //JER uncertainty
-      if (jetsSmearedUp->size() > 0) {
-        const pat::Jet & fatJetUp = jetsSmearedUp->at(0);
-        jet_pt_JERUp = fatJetUp.pt();
-        jet_mass_JERUp = fatJetUp.mass();
-        double JERUpCorrection = fatJetUp.pt()/jet_pt;
-        jet_mass_pruned_JERUp = JERUpCorrection*jet_mass_pruned;
-        jet_mass_softdrop_JERUp = JERUpCorrection*jet_mass_softdrop;
-        // For PUPPI SD mass, we treat it separately using official JMR SF & unc, and resolution.
-        // We don't have a gen level mass, so we'll use pT to calculate the factor for mass
-        // see https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetWtagging
-        float c = getSmearingFactor(mSDSF, mSDSFUnc, mSDResolutionRel, fatJet, *genJetsAK8, 1, 0.4, 99999., true);
-        jet_mass_softdrop_PUPPI_JERUp = c*jet_mass_softdrop_PUPPI;
-        smearedJetUp = fatJetUp.p4();
-        smearedJetUp_SD.SetPt(fatJetUp.pt());
-        smearedJetUp_SD.SetEta(fatJetUp.eta());
-        smearedJetUp_SD.SetPhi(fatJetUp.phi());
-        smearedJetUp_SD.SetM(jet_mass_softdrop_JERUp);
-      } else {
-        jet_pt_JERUp = -99;
-        jet_mass_JERUp = -99;
-        jet_mass_pruned_JERUp = -99;
-        jet_mass_softdrop_JERUp = -99;
-        jet_mass_softdrop_PUPPI_JERUp = -99;
-      }
+	   //JER uncertainty
+	   if (jetsSmearedUp->size() > 0)
+	     {
+	       const pat::Jet & fatJetUp = jetsSmearedUp->at(0);
+	       jet_pt_JERUp = fatJetUp.pt();
+	       jet_mass_JERUp = fatJetUp.mass();
+	       double JERUpCorrection = fatJetUp.pt()/jet_pt;
+	       jet_mass_pruned_JERUp = JERUpCorrection*jet_mass_pruned;
+	       jet_mass_softdrop_JERUp = JERUpCorrection*jet_mass_softdrop;
+	       // For PUPPI SD mass, we treat it separately using official JMR SF & unc, and resolution.
+	       // We don't have a gen level mass, so we'll use pT to calculate the factor for mass
+	       // see https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetWtagging
+	       float c = getSmearingFactor(mSDSF, mSDSFUnc, mSDResolutionRel, fatJet, *genJetsAK8, 1, 0.4, 99999., true);
+	       jet_mass_softdrop_PUPPI_JERUp = c*jet_mass_softdrop_PUPPI;
+	       smearedJetUp = fatJetUp.p4();
+	       smearedJetUp_SD.SetPt(fatJetUp.pt());
+	       smearedJetUp_SD.SetEta(fatJetUp.eta());
+	       smearedJetUp_SD.SetPhi(fatJetUp.phi());
+	       smearedJetUp_SD.SetM(jet_mass_softdrop_JERUp);
+	     }
+	   else
+	     {
+	       jet_pt_JERUp = -99;
+	       jet_mass_JERUp = -99;
+	       jet_mass_pruned_JERUp = -99;
+	       jet_mass_softdrop_JERUp = -99;
+	       jet_mass_softdrop_PUPPI_JERUp = -99;
+	     }
 
-      if (jetsSmearedDown->size() > 0) {
-        const pat::Jet & fatJetDown = jetsSmearedDown->at(0);
-        jet_pt_JERDown = fatJetDown.pt();
-        jet_mass_JERDown = fatJetDown.mass();
-        double JERDownCorrection = fatJetDown.pt()/jet_pt;
-        jet_mass_pruned_JERDown = JERDownCorrection*jet_mass_pruned;
-        jet_mass_softdrop_JERDown = JERDownCorrection*jet_mass_softdrop;
-        float c = getSmearingFactor(mSDSF, mSDSFUnc, mSDResolutionRel, fatJet, *genJetsAK8, -1, 0.4, 99999., true);
-        jet_mass_softdrop_PUPPI_JERDown = c*jet_mass_softdrop_PUPPI;
-        smearedJetDown = fatJetDown.p4();
-        smearedJetDown_SD.SetPt(fatJetDown.pt());
-        smearedJetDown_SD.SetEta(fatJetDown.eta());
-        smearedJetDown_SD.SetPhi(fatJetDown.phi());
-        smearedJetDown_SD.SetM(jet_mass_softdrop_JERDown);
-      } else {
-        jet_pt_JERDown = -99;
-        jet_mass_JERDown = -99;
-        jet_mass_pruned_JERDown = -99;
-        jet_mass_softdrop_JERDown = -99;
-        jet_mass_softdrop_PUPPI_JERDown = -99;
-      }
+	   if (jetsSmearedDown->size() > 0)
+	     {
+	       const pat::Jet & fatJetDown = jetsSmearedDown->at(0);
+	       jet_pt_JERDown = fatJetDown.pt();
+	       jet_mass_JERDown = fatJetDown.mass();
+	       double JERDownCorrection = fatJetDown.pt()/jet_pt;
+	       jet_mass_pruned_JERDown = JERDownCorrection*jet_mass_pruned;
+	       jet_mass_softdrop_JERDown = JERDownCorrection*jet_mass_softdrop;
+	       float c = getSmearingFactor(mSDSF, mSDSFUnc, mSDResolutionRel, fatJet, *genJetsAK8, -1, 0.4, 99999., true);
+	       jet_mass_softdrop_PUPPI_JERDown = c*jet_mass_softdrop_PUPPI;
+	       smearedJetDown = fatJetDown.p4();
+	       smearedJetDown_SD.SetPt(fatJetDown.pt());
+	       smearedJetDown_SD.SetEta(fatJetDown.eta());
+	       smearedJetDown_SD.SetPhi(fatJetDown.phi());
+	       smearedJetDown_SD.SetM(jet_mass_softdrop_JERDown);
+	     }
+	   else
+	     {
+	       jet_pt_JERDown = -99;
+	       jet_mass_JERDown = -99;
+	       jet_mass_pruned_JERDown = -99;
+	       jet_mass_softdrop_JERDown = -99;
+	       jet_mass_softdrop_PUPPI_JERDown = -99;
+	     }
 
-    }
-  }
-  
-  else throw cms::Exception("InvalidValue") << "This shouldn't happen, we require at least 1 jet, but the size of the jet collection for this event is zero!" << std::endl; 
-  
-  //Loop over the collection of the AK4 jets which contain b-tagging information (to veto b-jets)
-  if(isMC){
-    jetFlavours.clear();
-
-    BgenjetStatus43_pt.clear();
-    BgenjetStatus43_eta.clear();
-    BgenjetStatus43_phi.clear();
-    BgenjetStatus43_mass.clear();
-    BgenjetStatus43_motherPDGID.clear();
-
-
-    BgenjetStatus21_pt.clear();
-    BgenjetStatus21_eta.clear();
-    BgenjetStatus21_phi.clear();
-    BgenjetStatus21_mass.clear();
-    BgenjetStatus21_motherPDGID.clear();
-  
-    for (unsigned int iGen = 0; iGen < genParticles-> size() && isMC; ++iGen)
-    {
-      if (std::abs((genParticles -> at(iGen)).pdgId()) == 5 ){
-      if ((genParticles -> at(iGen)).status() == 21){
-        BgenjetStatus21_pt.push_back((genParticles -> at(iGen)).pt());
-        BgenjetStatus21_eta.push_back((genParticles -> at(iGen)).eta());
-        BgenjetStatus21_phi.push_back((genParticles -> at(iGen)).phi());
-        BgenjetStatus21_mass.push_back((genParticles -> at(iGen)).mass());
-        BgenjetStatus21_motherPDGID.push_back((genParticles -> at(iGen)).mother()->pdgId());
-      }
-      if ((genParticles -> at(iGen)).status() == 43){
-        BgenjetStatus43_pt.push_back((genParticles -> at(iGen)).pt());
-        BgenjetStatus43_eta.push_back((genParticles -> at(iGen)).eta());
-        BgenjetStatus43_phi.push_back((genParticles -> at(iGen)).phi());
-        BgenjetStatus43_mass.push_back((genParticles -> at(iGen)).mass());
-        BgenjetStatus43_motherPDGID.push_back((genParticles -> at(iGen)).mother()->pdgId());
-      }
+	 }
      }
-    }
-  }
-  // Count number of btagged AK4 jets
-  nbtag = 0;
-  nbtagMedium = 0;
-  nbtagLoose = 0;
-  nbtag_JECUp = 0;
-  nbtag_JECDown = 0;
-  nbtag_JERUp = 0;
-  nbtag_JERDown = 0;
-  for (const auto & itr : *AK4Jets)
-  {
-    //taken from: https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80X#Supported_Algorithms_and_Operati
-    if((itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags")) > bTagDiscrCut){
-      nbtag ++;
-    }
-    if((itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags")) > bTagDiscrCutMedium){
-      nbtagMedium ++;
-    }
-    if((itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags")) > bTagDiscrCutLoose){
-      nbtagLoose ++;
-    }
-    // std::cout << "Nominal " << itr.pt() << " : " << itr.eta() << " : " << itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") << std::endl;
-    if(isMC) jetFlavours.push_back(itr.partonFlavour());
-  }
+  
+   else throw cms::Exception("InvalidValue") << "This shouldn't happen, we require at least 1 jet, but the size of the jet collection for this event is zero!" << std::endl; 
+  
+   //Loop over the collection of the AK4 jets which contain b-tagging information (to veto b-jets)
+   if(isMC)
+     {
+       jetFlavours.clear();
 
-  if (isMC) {
-    for (const auto & itr : *AK4JetsSmearedUp) {
-      if (itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") > bTagDiscrCut) {
-        nbtag_JERUp++;
-      }
-      // std::cout << "Smeared Up " << itr.pt() << " : " << itr.eta() << " : " << itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") << std::endl;
-    }
+       BgenjetStatus43_pt.clear();
+       BgenjetStatus43_eta.clear();
+       BgenjetStatus43_phi.clear();
+       BgenjetStatus43_mass.clear();
+       BgenjetStatus43_motherPDGID.clear();
 
-    for (const auto & itr : *AK4JetsSmearedDown) {
-      if (itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") > bTagDiscrCut) {
-        nbtag_JERDown++;
-      }
-      // std::cout << "Smeared Down " << itr.pt() << " : " << itr.eta() << " : " << itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") << std::endl;
-    }
 
-    for (const auto & itr : *AK4JetsShiftedUp) {
-      if (itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") > bTagDiscrCut) {
-        nbtag_JECUp++;
-      }
-      // std::cout << "Shifted Up " << itr.pt() << " : " << itr.eta() << " : " << itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") << std::endl;
-    }
+       BgenjetStatus21_pt.clear();
+       BgenjetStatus21_eta.clear();
+       BgenjetStatus21_phi.clear();
+       BgenjetStatus21_mass.clear();
+       BgenjetStatus21_motherPDGID.clear();
+  
+       for (unsigned int iGen = 0; iGen < genParticles-> size() && isMC; ++iGen)
+	 {
+	   if (std::abs((genParticles -> at(iGen)).pdgId()) == 5 )
+	     {
+	       if ((genParticles -> at(iGen)).status() == 21)
+		 {
+		   BgenjetStatus21_pt.push_back((genParticles -> at(iGen)).pt());
+		   BgenjetStatus21_eta.push_back((genParticles -> at(iGen)).eta());
+		   BgenjetStatus21_phi.push_back((genParticles -> at(iGen)).phi());
+		   BgenjetStatus21_mass.push_back((genParticles -> at(iGen)).mass());
+		   BgenjetStatus21_motherPDGID.push_back((genParticles -> at(iGen)).mother()->pdgId());
+		 }
+	       if ((genParticles -> at(iGen)).status() == 43)
+		 {
+		   BgenjetStatus43_pt.push_back((genParticles -> at(iGen)).pt());
+		   BgenjetStatus43_eta.push_back((genParticles -> at(iGen)).eta());
+		   BgenjetStatus43_phi.push_back((genParticles -> at(iGen)).phi());
+		   BgenjetStatus43_mass.push_back((genParticles -> at(iGen)).mass());
+		   BgenjetStatus43_motherPDGID.push_back((genParticles -> at(iGen)).mother()->pdgId());
+		 }
+	     }
+	 }
+     }
+   // Count number of btagged AK4 jets
+   nbtag = 0;
+   nbtagMedium = 0;
+   nbtagLoose = 0;
+   nbtag_JECUp = 0;
+   nbtag_JECDown = 0;
+   nbtag_JERUp = 0;
+   nbtag_JERDown = 0;
+   for (const auto & itr : *AK4Jets)
+     {
+       //taken from: https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80X#Supported_Algorithms_and_Operati
+       if((itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags")) > bTagDiscrCut){
+	 nbtag ++;
+       }
+       if((itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags")) > bTagDiscrCutMedium){
+	 nbtagMedium ++;
+       }
+       if((itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags")) > bTagDiscrCutLoose){
+	 nbtagLoose ++;
+       }
+       // std::cout << "Nominal " << itr.pt() << " : " << itr.eta() << " : " << itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") << std::endl;
+       if(isMC) jetFlavours.push_back(itr.partonFlavour());
+     }
 
-    for (const auto & itr : *AK4JetsShiftedDown) {
-      if (itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") > bTagDiscrCut) {
-        nbtag_JECDown++;
-      }
-      // std::cout << "Shifted Down " << itr.pt() << " : " << itr.eta() << " : " << itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") << std::endl;
-    }
-  }
+   if (isMC)
+     {
+       for (const auto & itr : *AK4JetsSmearedUp)
+	 {
+	   if (itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") > bTagDiscrCut)
+	     {
+	       nbtag_JERUp++;
+	     }
+	   // std::cout << "Smeared Up " << itr.pt() << " : " << itr.eta() << " : " << itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") << std::endl;
+	 }
+
+       for (const auto & itr : *AK4JetsSmearedDown)
+	 {
+	   if (itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") > bTagDiscrCut){nbtag_JERDown++;}
+	   // std::cout << "Smeared Down " << itr.pt() << " : " << itr.eta() << " : " << itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") << std::endl;
+	 }
+
+       for (const auto & itr : *AK4JetsShiftedUp)
+	 {
+	   if (itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") > bTagDiscrCut) {nbtag_JECUp++;}
+	   // std::cout << "Shifted Up " << itr.pt() << " : " << itr.eta() << " : " << itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") << std::endl;
+	 }
+
+       for (const auto & itr : *AK4JetsShiftedDown)
+	 {
+	   if (itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") > bTagDiscrCut) {nbtag_JECDown++;}
+	   // std::cout << "Shifted Down " << itr.pt() << " : " << itr.eta() << " : " << itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") << std::endl;
+	 }
+     }
  
-  if (AK4Jets -> size() > 0)
-  {
-    jet2_pt = (AK4Jets -> at(0)).pt();
-    jet2_eta = (AK4Jets -> at(0)).phi();
-    jet2_phi = (AK4Jets -> at(0)).eta();
-    jet2_btag = (AK4Jets -> at(0)).bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
-  }
+   if (AK4Jets -> size() > 0)
+     {
+       jet2_pt = (AK4Jets -> at(0)).pt();
+       jet2_eta = (AK4Jets -> at(0)).phi();
+       jet2_phi = (AK4Jets -> at(0)).eta();
+       jet2_btag = (AK4Jets -> at(0)).bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+     }
   
-  else 
-  {
-    jet2_pt = -99.;
-    jet2_eta = -99.;
-    jet2_phi = -99.;
-    jet2_btag = -99.;
-  }
+   else 
+     {
+       jet2_pt = -99.;
+       jet2_eta = -99.;
+       jet2_phi = -99.;
+       jet2_btag = -99.;
+     }
   
-  if (AK4Jets -> size() > 1)
-  {
-    jet3_pt = (AK4Jets -> at(1)).pt();
-    jet3_eta = (AK4Jets -> at(1)).eta();
-    jet3_phi = (AK4Jets -> at(1)).phi();
-    jet3_btag = (AK4Jets -> at(1)).bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
-  } 
-  else 
-  {
-    jet3_pt = -99.;
-    jet3_eta = -99.;
-    jet3_phi = -99.;
-    jet3_btag = -99.;
-  }
+   if (AK4Jets -> size() > 1)
+     {
+       jet3_pt = (AK4Jets -> at(1)).pt();
+       jet3_eta = (AK4Jets -> at(1)).eta();
+       jet3_phi = (AK4Jets -> at(1)).phi();
+       jet3_btag = (AK4Jets -> at(1)).bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+     } 
+   else 
+     {
+       jet3_pt = -99.;
+       jet3_eta = -99.;
+       jet3_phi = -99.;
+       jet3_btag = -99.;
+     }
   
-  //diboson mass
+   //diboson mass
    ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > hadronicVp4, hadronicVp4_SD, leptonicVp4, lvj_p4, lvj_p4_SD;
    //hadronic V
    hadronicVp4.SetPt(jet_pt);
@@ -2268,293 +2313,302 @@ TreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    leptonicVp4.SetM(Wboson_lep.mass);
    //std::cout<<"*Leptonically decaying W* "<<leptonicVp4.px()<<" "<<leptonicVp4.py()<<" "<<leptonicVp4.pz()<<" "<<leptonicVp4.e()<<" "<<leptonicVp4.M()<<std::endl;
    
-   if (leptonicVs -> size() > 0) {
-     saveDibosonMass(leptonicVp4, hadronicVp4, m_lvj);
-     saveDibosonMass(leptonicVp4, hadronicVp4_SD, m_lvj_SD);
-   } else {
-     m_lvj = -99.;
-     m_lvj_SD = -99.;
-   }
+   if (leptonicVs -> size() > 0)
+     {
+       saveDibosonMass(leptonicVp4, hadronicVp4, m_lvj);
+       saveDibosonMass(leptonicVp4, hadronicVp4_SD, m_lvj_SD);
+     }
+   else
+     {
+       m_lvj = -99.;
+       m_lvj_SD = -99.;
+     }
    //std::cout<<"Diboson mass: "<<m_lvj<<std::endl<<std::endl;
    //std::cout<<"---------------------------------------"<<std::endl;
    //systematics
-   if (isMC) {
-     m_lvj_UnclEnUp = -99.;
-     m_lvj_UnclEnDown = -99.;
+   if (isMC)
+     {
+       m_lvj_UnclEnUp = -99.;
+       m_lvj_UnclEnDown = -99.;
 
-     m_lvj_JECUp = -99.;
-     m_lvj_JECDown = -99.;
+       m_lvj_JECUp = -99.;
+       m_lvj_JECDown = -99.;
 
-     m_lvj_LeptonEnUp = -99.;
-     m_lvj_LeptonEnDown = -99.;
+       m_lvj_LeptonEnUp = -99.;
+       m_lvj_LeptonEnDown = -99.;
 
-     m_lvj_LeptonResUp = -99.;
-     m_lvj_LeptonResDown = -99.;
+       m_lvj_LeptonResUp = -99.;
+       m_lvj_LeptonResDown = -99.;
 
-     m_lvj_JERUp = -99.;
-     m_lvj_JERDown = -99.;
+       m_lvj_JERUp = -99.;
+       m_lvj_JERDown = -99.;
 
-     // SD versions
-     m_lvj_SD_UnclEnUp = -99.;
-     m_lvj_SD_UnclEnDown = -99.;
+       // SD versions
+       m_lvj_SD_UnclEnUp = -99.;
+       m_lvj_SD_UnclEnDown = -99.;
 
-     m_lvj_SD_JECUp = -99.;
-     m_lvj_SD_JECDown = -99.;
+       m_lvj_SD_JECUp = -99.;
+       m_lvj_SD_JECDown = -99.;
 
-     m_lvj_SD_LeptonEnUp = -99.;
-     m_lvj_SD_LeptonEnDown = -99.;
+       m_lvj_SD_LeptonEnUp = -99.;
+       m_lvj_SD_LeptonEnDown = -99.;
 
-     m_lvj_SD_LeptonResUp = -99.;
-     m_lvj_SD_LeptonResDown = -99.;
+       m_lvj_SD_LeptonResUp = -99.;
+       m_lvj_SD_LeptonResDown = -99.;
 
-     m_lvj_SD_JERUp = -99.;
-     m_lvj_SD_JERDown = -99.;
+       m_lvj_SD_JERUp = -99.;
+       m_lvj_SD_JERDown = -99.;
 
-     if (leptonicVs -> size() > 0) {
-       //METUnclEn
-       saveDibosonMass(SystMap.at("UnclusteredEnUp"), hadronicVp4, m_lvj_UnclEnUp);
-       saveDibosonMass(SystMap.at("UnclusteredEnDown"), hadronicVp4, m_lvj_UnclEnDown);
+       if (leptonicVs -> size() > 0)
+	 {
+	   //METUnclEn
+	   saveDibosonMass(SystMap.at("UnclusteredEnUp"), hadronicVp4, m_lvj_UnclEnUp);
+	   saveDibosonMass(SystMap.at("UnclusteredEnDown"), hadronicVp4, m_lvj_UnclEnDown);
 
-       saveDibosonMass(SystMap.at("UnclusteredEnUp"), hadronicVp4_SD, m_lvj_SD_UnclEnUp);
-       saveDibosonMass(SystMap.at("UnclusteredEnDown"), hadronicVp4_SD, m_lvj_SD_UnclEnDown);
+	   saveDibosonMass(SystMap.at("UnclusteredEnUp"), hadronicVp4_SD, m_lvj_SD_UnclEnUp);
+	   saveDibosonMass(SystMap.at("UnclusteredEnDown"), hadronicVp4_SD, m_lvj_SD_UnclEnDown);
 
-       //JEC
-       saveDibosonMass(SystMap.at("JetEnUp"), hadronicVp4*(1+JECunc), m_lvj_JECUp);
-       saveDibosonMass(SystMap.at("JetEnDown"), hadronicVp4*(1+JECunc), m_lvj_JECDown);
+	   //JEC
+	   saveDibosonMass(SystMap.at("JetEnUp"), hadronicVp4*(1+JECunc), m_lvj_JECUp);
+	   saveDibosonMass(SystMap.at("JetEnDown"), hadronicVp4*(1+JECunc), m_lvj_JECDown);
 
-       saveDibosonMass(SystMap.at("JetEnUp"), hadronicVp4_SD*(1+JECunc), m_lvj_SD_JECUp);
-       saveDibosonMass(SystMap.at("JetEnDown"), hadronicVp4_SD*(1+JECunc), m_lvj_SD_JECDown);
+	   saveDibosonMass(SystMap.at("JetEnUp"), hadronicVp4_SD*(1+JECunc), m_lvj_SD_JECUp);
+	   saveDibosonMass(SystMap.at("JetEnDown"), hadronicVp4_SD*(1+JECunc), m_lvj_SD_JECDown);
 
-       //lepton energy scale uncertainty
-       saveDibosonMass(SystMap.at("LeptonEnUp"), hadronicVp4, m_lvj_LeptonEnUp);
-       saveDibosonMass(SystMap.at("LeptonEnDown"), hadronicVp4, m_lvj_LeptonEnDown);
+	   //lepton energy scale uncertainty
+	   saveDibosonMass(SystMap.at("LeptonEnUp"), hadronicVp4, m_lvj_LeptonEnUp);
+	   saveDibosonMass(SystMap.at("LeptonEnDown"), hadronicVp4, m_lvj_LeptonEnDown);
 
-       saveDibosonMass(SystMap.at("LeptonEnUp"), hadronicVp4_SD, m_lvj_SD_LeptonEnUp);
-       saveDibosonMass(SystMap.at("LeptonEnDown"), hadronicVp4_SD, m_lvj_SD_LeptonEnDown);
+	   saveDibosonMass(SystMap.at("LeptonEnUp"), hadronicVp4_SD, m_lvj_SD_LeptonEnUp);
+	   saveDibosonMass(SystMap.at("LeptonEnDown"), hadronicVp4_SD, m_lvj_SD_LeptonEnDown);
 
-       //lepton energy resolution uncertainty
-       saveDibosonMass(SystMap.at("LeptonResUp"), hadronicVp4, m_lvj_LeptonResUp);
-       saveDibosonMass(SystMap.at("LeptonResDown"), hadronicVp4, m_lvj_LeptonResDown);
+	   //lepton energy resolution uncertainty
+	   saveDibosonMass(SystMap.at("LeptonResUp"), hadronicVp4, m_lvj_LeptonResUp);
+	   saveDibosonMass(SystMap.at("LeptonResDown"), hadronicVp4, m_lvj_LeptonResDown);
 
-       saveDibosonMass(SystMap.at("LeptonResUp"), hadronicVp4_SD, m_lvj_SD_LeptonResUp);
-       saveDibosonMass(SystMap.at("LeptonResDown"), hadronicVp4_SD, m_lvj_SD_LeptonResDown);
+	   saveDibosonMass(SystMap.at("LeptonResUp"), hadronicVp4_SD, m_lvj_SD_LeptonResUp);
+	   saveDibosonMass(SystMap.at("LeptonResDown"), hadronicVp4_SD, m_lvj_SD_LeptonResDown);
+	 }
+
+       //jet energy resolution uncertainty
+       if (leptonicVs -> size() > 0 && jetsSmearedUp -> size() > 0)
+	 {
+	   saveDibosonMass(SystMap.at("JetResUp"), smearedJetUp, m_lvj_JERUp);
+	   saveDibosonMass(SystMap.at("JetResUp"), smearedJetUp_SD, m_lvj_SD_JERUp);
+	 }
+       if (leptonicVs -> size() > 0 && jetsSmearedUp -> size() > 0)
+	 {
+	   saveDibosonMass(SystMap.at("JetResDown"), smearedJetDown, m_lvj_JERDown);
+	   saveDibosonMass(SystMap.at("JetResDown"), smearedJetDown_SD, m_lvj_SD_JERDown);
+	 }
      }
 
-     //jet energy resolution uncertainty
-     if (leptonicVs -> size() > 0 && jetsSmearedUp -> size() > 0) {
-       saveDibosonMass(SystMap.at("JetResUp"), smearedJetUp, m_lvj_JERUp);
-       saveDibosonMass(SystMap.at("JetResUp"), smearedJetUp_SD, m_lvj_SD_JERUp);
+   edm::Handle<edm::TriggerResults> Triggers;
+   if (channel == "el")
+     {
+       iEvent.getByToken(TriggerResultsToken, Triggers);
+       edm::TriggerNames names = iEvent.triggerNames(*Triggers);
+       for (unsigned int iTrig = 0; iTrig < Triggers -> size(); iTrig ++)
+	 {
+	   if( boost::algorithm::contains(names.triggerName(iTrig), "HLT_Ele27_WPTight_Gsf_v") )  bit_HLT_Ele_27_tight =  Triggers -> accept(iTrig);
+	   if( boost::algorithm::contains(names.triggerName(iTrig), "HLT_Ele45_WPLoose_Gsf_v") )  bit_HLT_Ele_45 =  Triggers -> accept(iTrig);
+	   if( boost::algorithm::contains(names.triggerName(iTrig), "HLT_Ele115_CaloIdVT_GsfTrkIdT_v") )  bit_HLT_Ele_115 =  Triggers -> accept(iTrig);
+	   if( boost::algorithm::contains(names.triggerName(iTrig), "HLT_Photon175_v") )  bit_HLT_Photon_175 =  Triggers -> accept(iTrig);
+	   bit_HLT_Ele_27_OR_45_OR_115 = bit_HLT_Ele_27_tight || bit_HLT_Ele_45 || bit_HLT_Ele_115;
+	 }
      }
-     if (leptonicVs -> size() > 0 && jetsSmearedUp -> size() > 0) {
-       saveDibosonMass(SystMap.at("JetResDown"), smearedJetDown, m_lvj_JERDown);
-       saveDibosonMass(SystMap.at("JetResDown"), smearedJetDown_SD, m_lvj_SD_JERDown);
+
+   topPtSF=1.;
+   bool topInGen=0, antitopInGen=0;
+   double topSF=1., antitopSF=1.;
+   if(isMC)
+     {
+       for(unsigned int iGen=0; iGen<genParticles->size(); ++iGen)
+	 if((genParticles->at(iGen)).pdgId()==6 && (genParticles->at(iGen)).status()==22)
+	   {
+	     topInGen=1;
+	     topSF=std::exp(0.0615-(0.0005*(genParticles->at(iGen)).pt()));
+	   }
+	 else if((genParticles->at(iGen)).pdgId()==-6 && (genParticles->at(iGen)).status()==22)
+	   {
+	     antitopInGen=1;
+	     antitopSF=std::exp(0.0615-(0.0005*(genParticles->at(iGen)).pt()));
+	     //if ((std::abs(genParticles->at(iGen).pdgId()) == 12 || std::abs(genParticles->at(iGen).pdgId()) == 14) && (genParticles->at(iGen).mother()->pdgId() == 23 || std::abs(genParticles->at(iGen).mother()->pdgId()) == 24 ))
+	     if ((std::abs(genParticles->at(iGen).pdgId()) == 12 || std::abs(genParticles->at(iGen).pdgId()) == 14)) // && (genParticles->at(iGen).mother()->pdgId() == 23 || std::abs(genParticles->at(iGen).mother()->pdgId()) == 24 ))
+	       {
+		 //here is where we set the gen neutrino stuff
+		 gen_neutrino_pz = genParticles->at(iGen).pz();
+		 found = 1;
+	       }
+	   }
+       if(topInGen && antitopInGen)
+	 topPtSF=std::sqrt(topSF*antitopSF); 
+       //	std::cout<<topSF<<" "<<antitopSF<<" "<<topPtSF<<std::endl;
      }
-   }
 
-  edm::Handle<edm::TriggerResults> Triggers;
-  if (channel == "el") {
-    iEvent.getByToken(TriggerResultsToken, Triggers);
-    edm::TriggerNames names = iEvent.triggerNames(*Triggers);
-    for (unsigned int iTrig = 0; iTrig < Triggers -> size(); iTrig ++)
-    {
-      if( boost::algorithm::contains(names.triggerName(iTrig), "HLT_Ele27_WPTight_Gsf_v") )  bit_HLT_Ele_27_tight =  Triggers -> accept(iTrig);
-      if( boost::algorithm::contains(names.triggerName(iTrig), "HLT_Ele45_WPLoose_Gsf_v") )  bit_HLT_Ele_45 =  Triggers -> accept(iTrig);
-      if( boost::algorithm::contains(names.triggerName(iTrig), "HLT_Ele115_CaloIdVT_GsfTrkIdT_v") )  bit_HLT_Ele_115 =  Triggers -> accept(iTrig);
-      if( boost::algorithm::contains(names.triggerName(iTrig), "HLT_Photon175_v") )  bit_HLT_Photon_175 =  Triggers -> accept(iTrig);
-      bit_HLT_Ele_27_OR_45_OR_115 = bit_HLT_Ele_27_tight || bit_HLT_Ele_45 || bit_HLT_Ele_115;
-    }
-  }
+   double genWeightPosForaTGC=std::abs(genWeight);
+   if(isMC && !isSignal) genWeightPosForaTGC=genWeight;
 
-  topPtSF=1.;
-  bool topInGen=0, antitopInGen=0;
-  double topSF=1., antitopSF=1.;
-  if(isMC)
-  {
-        for(unsigned int iGen=0; iGen<genParticles->size(); ++iGen)
-                if((genParticles->at(iGen)).pdgId()==6 && (genParticles->at(iGen)).status()==22)
-		{
-			topInGen=1;
-			topSF=std::exp(0.0615-(0.0005*(genParticles->at(iGen)).pt()));
-		}
-                else if((genParticles->at(iGen)).pdgId()==-6 && (genParticles->at(iGen)).status()==22)
-		{
-			antitopInGen=1;
-                        antitopSF=std::exp(0.0615-(0.0005*(genParticles->at(iGen)).pt()));
-			//if ((std::abs(genParticles->at(iGen).pdgId()) == 12 || std::abs(genParticles->at(iGen).pdgId()) == 14) && (genParticles->at(iGen).mother()->pdgId() == 23 || std::abs(genParticles->at(iGen).mother()->pdgId()) == 24 ))
-			if ((std::abs(genParticles->at(iGen).pdgId()) == 12 || std::abs(genParticles->at(iGen).pdgId()) == 14)) // && (genParticles->at(iGen).mother()->pdgId() == 23 || std::abs(genParticles->at(iGen).mother()->pdgId()) == 24 ))
-			  {
-			    //here is where we set the gen neutrino stuff
-			    gen_neutrino_pz = genParticles->at(iGen).pz();
-			    found = 1;
-			  }
-		}
-        if(topInGen && antitopInGen)
-		topPtSF=std::sqrt(topSF*antitopSF); 
-//	std::cout<<topSF<<" "<<antitopSF<<" "<<topPtSF<<std::endl;
-  }
-
-  double genWeightPosForaTGC=std::abs(genWeight);
-  if(isMC && !isSignal) genWeightPosForaTGC=genWeight;
-
-  if (isMC) {
-    totWeight = PUweight*genWeightPosForaTGC*aTGCWeightUnitConv*LeptonSF*btagWeight*VTagSF*topPtSF;
-    totWeight_BTagUp = PUweight*genWeightPosForaTGC*aTGCWeightUnitConv*LeptonSF*btagWeight_BTagUp*VTagSF*topPtSF;
-    totWeight_BTagDown = PUweight*genWeightPosForaTGC*aTGCWeightUnitConv*LeptonSF*btagWeight_BTagDown*VTagSF*topPtSF;
-    totWeight_MistagUp = PUweight*genWeightPosForaTGC*aTGCWeightUnitConv*LeptonSF*btagWeight_MistagUp*VTagSF*topPtSF;
-    totWeight_MistagDown = PUweight*genWeightPosForaTGC*aTGCWeightUnitConv*LeptonSF*btagWeight_MistagDown*VTagSF*topPtSF;
-    totWeight_LeptonIDUp = PUweight*genWeightPosForaTGC*aTGCWeightUnitConv*LeptonSF_Up*btagWeight*VTagSF*topPtSF;
-    totWeight_LeptonIDDown = PUweight*genWeightPosForaTGC*aTGCWeightUnitConv*LeptonSF_Down*btagWeight*VTagSF*topPtSF;
-  }
+   if (isMC)
+     {
+       totWeight = PUweight*genWeightPosForaTGC*aTGCWeightUnitConv*LeptonSF*btagWeight*VTagSF*topPtSF;
+       totWeight_BTagUp = PUweight*genWeightPosForaTGC*aTGCWeightUnitConv*LeptonSF*btagWeight_BTagUp*VTagSF*topPtSF;
+       totWeight_BTagDown = PUweight*genWeightPosForaTGC*aTGCWeightUnitConv*LeptonSF*btagWeight_BTagDown*VTagSF*topPtSF;
+       totWeight_MistagUp = PUweight*genWeightPosForaTGC*aTGCWeightUnitConv*LeptonSF*btagWeight_MistagUp*VTagSF*topPtSF;
+       totWeight_MistagDown = PUweight*genWeightPosForaTGC*aTGCWeightUnitConv*LeptonSF*btagWeight_MistagDown*VTagSF*topPtSF;
+       totWeight_LeptonIDUp = PUweight*genWeightPosForaTGC*aTGCWeightUnitConv*LeptonSF_Up*btagWeight*VTagSF*topPtSF;
+       totWeight_LeptonIDDown = PUweight*genWeightPosForaTGC*aTGCWeightUnitConv*LeptonSF_Down*btagWeight*VTagSF*topPtSF;
+     }
 
   
-  // ANGLES
-  //   mm   mm   m   mmm  m      mmmmmm  mmmm 
-  //   ##   #"m  # m"   " #      #      #"   "
-  //  #  #  # #m # #   mm #      #mmmmm "#mmm 
-  //  #mm#  #  # # #    # #      #          "#
-  // #    # #   ##  "mmm" #mmmmm #mmmmm "mmm#"
+   // ANGLES
+   //   mm   mm   m   mmm  m      mmmmmm  mmmm 
+   //   ##   #"m  # m"   " #      #      #"   "
+   //  #  #  # #m # #   mm #      #mmmmm "#mmm 
+   //  #mm#  #  # # #    # #      #          "#
+   // #    # #   ##  "mmm" #mmmmm #mmmmm "mmm#"
 
 
   
-  Double_t lepton_mass(-99.9), METpx(-99.0), METpy(-99.0);//, METx(0.0), METy(0.0);
-  TLorentzVector lepton, met4vector, other_met4vector, jet0, jet1;
-  jet0.SetPxPyPzE(zerothsubjet_px, zerothsubjet_py, zerothsubjet_pz, zerothsubjet_e);
-  jet1.SetPxPyPzE(firstsubjet_px, firstsubjet_py, firstsubjet_pz, firstsubjet_e);
+   Double_t lepton_mass(-99.9), METpx(-99.0), METpy(-99.0);//, METx(0.0), METy(0.0);
+   TLorentzVector lepton, met4vector, other_met4vector, jet0, jet1;
+   jet0.SetPxPyPzE(zerothsubjet_px, zerothsubjet_py, zerothsubjet_pz, zerothsubjet_e);
+   jet1.SetPxPyPzE(firstsubjet_px, firstsubjet_py, firstsubjet_pz, firstsubjet_e);
 
-  /////////////////////////////////////////
-  Double_t lepton_px(0.0), lepton_py(0.0), lepton_pz(0.0);
+   /////////////////////////////////////////
+   Double_t lepton_px(0.0), lepton_py(0.0), lepton_pz(0.0);
   
-  if (channel == "el")
-    {
-      lepton_mass = 0.00051099;
-      lepton_px = (leptons->at(0).px());
-      lepton_py = (leptons->at(0).py());
-      lepton_pz = (leptons->at(0).pz());
-    }
+   if (channel == "el")
+     {
+       lepton_mass = 0.00051099;
+       lepton_px = (leptons->at(0).px());
+       lepton_py = (leptons->at(0).py());
+       lepton_pz = (leptons->at(0).pz());
+     }
    
-  if (channel == "mu")
-    {
-      auto leptonPtr = leptons -> ptrAt(0);
-      reco::MuonPtr asmuonPtr(leptonPtr);
-      reco::ElectronPtr aselectronPtr(leptonPtr);
-      lepton_mass = 0.105658367;
-      lepton_px = asmuonPtr->tunePMuonBestTrack()->px();
-      lepton_py = asmuonPtr->tunePMuonBestTrack()->py();
-      lepton_pz = asmuonPtr->tunePMuonBestTrack()->pz();
-    }
+   if (channel == "mu")
+     {
+       auto leptonPtr = leptons -> ptrAt(0);
+       reco::MuonPtr asmuonPtr(leptonPtr);
+       reco::ElectronPtr aselectronPtr(leptonPtr);
+       lepton_mass = 0.105658367;
+       lepton_px = asmuonPtr->tunePMuonBestTrack()->px();
+       lepton_py = asmuonPtr->tunePMuonBestTrack()->py();
+       lepton_pz = asmuonPtr->tunePMuonBestTrack()->pz();
+     }
 
   
-  if (metHandle->size() > 0)
-    {
-      const pat::MET& metCand = metHandle->at(0);
+   if (metHandle->size() > 0)
+     {
+       const pat::MET& metCand = metHandle->at(0);
 
-      METpx = metCand.px();
-      METpy = metCand.py();
-      //METx = metCand.px();
-      //METy = metCand.py();
-    }
+       METpx = metCand.px();
+       METpy = metCand.py();
+       //METx = metCand.px();
+       //METy = metCand.py();
+     }
   
-  lepton.SetXYZM(lepton_px,lepton_py,lepton_pz,lepton_mass);
-  /////////////////////////////////////////
+   lepton.SetXYZM(lepton_px,lepton_py,lepton_pz,lepton_mass);
+   /////////////////////////////////////////
     
-  //METpx = METCand.pt * TMath::Cos(METCand.phi);
-  //METpy = METCand.pt * TMath::Sin(METCand.phi);
+   //METpx = METCand.pt * TMath::Cos(METCand.phi);
+   //METpy = METCand.pt * TMath::Sin(METCand.phi);
   
-  imaginary_neutrino = 0;
+   imaginary_neutrino = 0;
  
-  //if (channel == "el") lepton_mass = 0.00051099;
-  //if (channel == "mu") lepton_mass = 0.105658367;
+   //if (channel == "el") lepton_mass = 0.00051099;
+   //if (channel == "mu") lepton_mass = 0.105658367;
   
  
-  //lepton.SetPtEtaPhiM(Lepton.pt,Lepton.eta,Lepton.phi,lepton_mass);
+   //lepton.SetPtEtaPhiM(Lepton.pt,Lepton.eta,Lepton.phi,lepton_mass);
   
-  //lepton_xerror = lepton.Px() - lepton_px;//obsolete
-  //lepton_yerror = lepton.Py() - lepton_py;
-  //lepton_zerror = lepton.Pz() - lepton_pz;
+   //lepton_xerror = lepton.Px() - lepton_px;//obsolete
+   //lepton_yerror = lepton.Py() - lepton_py;
+   //lepton_zerror = lepton.Pz() - lepton_pz;
 
-  //met_xerror = METx - METpx;//obsolete
-  //met_yerror = METy - METpy;
+   //met_xerror = METx - METpx;//obsolete
+   //met_yerror = METy - METpy;
 
-  METzCalculator calc;
-  calc.SetMET(METpx, METpy);
-  calc.SetLepton(lepton);
-  calc.SetTruthInfo(gen_neutrino_pz);
-  calc.SetLeptonType(channel);//technically already have lepton mass from 4-vector, but this is still needed
-  calc.SetJets(jet0, jet1);
+   METzCalculator calc;
+   calc.SetMET(METpx, METpy);
+   calc.SetLepton(lepton);
+   calc.SetTruthInfo(gen_neutrino_pz);
+   calc.SetLeptonType(channel);//technically already have lepton mass from 4-vector, but this is still needed
+   calc.SetJets(jet0, jet1);
 
-  Double_t met_pz = calc.Calculate(7);//currently supports values 0-7
-  Double_t other_met_pz = calc.getOther();//must be run after Calculate method
+   Double_t met_pz = calc.Calculate(7);//currently supports values 0-7
+   Double_t other_met_pz = calc.getOther();//must be run after Calculate method
 
-  if (calc.IsComplex()) imaginary_neutrino = 1;
+   if (calc.IsComplex()) imaginary_neutrino = 1;
 
-  if (imaginary_neutrino == 1 && METcorrect)
-    {
-      METxyCorrector corr;
-      corr.setVocal(false);
-      corr.initialMET(METpx, METpy);
-      corr.setLepton(lepton);
-      //corr.SetLeptonType(channel);
+   if (imaginary_neutrino == 1 && METcorrect)
+     {
+       METxyCorrector corr;
+       corr.setVocal(false);
+       corr.initialMET(METpx, METpy);
+       corr.setLepton(lepton);
+       //corr.SetLeptonType(channel);
 
-      METpx = corr.Correct(1);
-      METpy = corr.Correct(2);
-      Double_t newWmass = corr.Correct(0);
+       METpx = corr.Correct(1);
+       METpy = corr.Correct(2);
+       Double_t newWmass = corr.Correct(0);
 
-      calc.SetMET(METpx, METpy);
-      calc.SetWmass(newWmass);
-      met_pz = calc.Calculate(7);
-    }
+       calc.SetMET(METpx, METpy);
+       calc.SetWmass(newWmass);
+       met_pz = calc.Calculate(7);
+     }
 
-  met4vector.SetXYZM(METpx,METpy,met_pz,0.0);
-  other_met4vector.SetXYZM(METpx,METpy,other_met_pz,0.0);
+   met4vector.SetXYZM(METpx,METpy,met_pz,0.0);
+   other_met4vector.SetXYZM(METpx,METpy,other_met_pz,0.0);
   
-  if (Wboson_lep.charge < 0.0) calculateAngles(lepton, met4vector, jet0, jet1, d_costheta1, d_costheta2, d_phi, d_costhetastar, d_phi1, d_phi2);
-  if (Wboson_lep.charge > 0.0) calculateAngles(met4vector, lepton, jet0, jet1, d_costheta1, d_costheta2, d_phi, d_costhetastar, d_phi1, d_phi2);
-  if (Wboson_lep.charge == 0.0) {std::cout << "There's a zero charge W?"; exit(5);}
+   if (Wboson_lep.charge < 0.0) calculateAngles(lepton, met4vector, jet0, jet1, d_costheta1, d_costheta2, d_phi, d_costhetastar, d_phi1, d_phi2);
+   if (Wboson_lep.charge > 0.0) calculateAngles(met4vector, lepton, jet0, jet1, d_costheta1, d_costheta2, d_phi, d_costhetastar, d_phi1, d_phi2);
+   if (Wboson_lep.charge == 0.0) {std::cout << "There's a zero charge W?"; exit(5);}
 
-  if (metHandle->size() > 0 && number_of_subjets >= 1)
-    {    
-      costhetastar = d_costhetastar;
-      costheta1 = d_costheta1;
-      costheta2 = d_costheta2;
-      phi = d_phi;
-      phi1 = d_phi1;
-      phi2 = d_phi2;
-    }
+   if (metHandle->size() > 0 && number_of_subjets >= 1)
+     {    
+       costhetastar = d_costhetastar;
+       costheta1 = d_costheta1;
+       costheta2 = d_costheta2;
+       phi = d_phi;
+       phi1 = d_phi1;
+       phi2 = d_phi2;
+     }
 
-  else
-    {
-      costhetastar = -99.9;
-      costheta1 = -99.9;
-      costheta2 = -99.9;
-      phi = +99.9;
-      phi1 = +99.9;
-      phi2 = +99.9;
-      return;
-    }
+   else
+     {
+       costhetastar = -99.9;
+       costheta1 = -99.9;
+       costheta2 = -99.9;
+       phi = +99.9;
+       phi1 = +99.9;
+       phi2 = +99.9;
+       return;
+     }
 
-  delta_neutrino0 =  calc.Calculate(0) - gen_neutrino_pz;
-  delta_neutrino1 =  calc.Calculate(1) - gen_neutrino_pz;
-  delta_neutrino2 =  calc.Calculate(2) - gen_neutrino_pz;
-  delta_neutrino3 =  calc.Calculate(3) - gen_neutrino_pz;
-  delta_neutrino4 =  calc.Calculate(4) - gen_neutrino_pz;
-  delta_neutrino5 =  calc.Calculate(5) - gen_neutrino_pz;
-  delta_neutrino6 =  calc.Calculate(6) - gen_neutrino_pz;
-  delta_neutrino7 =  calc.Calculate(7) - gen_neutrino_pz;
-  delta_neutrino8 =  calc.Calculate(8) - gen_neutrino_pz;
+   delta_neutrino0 =  calc.Calculate(0) - gen_neutrino_pz;
+   delta_neutrino1 =  calc.Calculate(1) - gen_neutrino_pz;
+   delta_neutrino2 =  calc.Calculate(2) - gen_neutrino_pz;
+   delta_neutrino3 =  calc.Calculate(3) - gen_neutrino_pz;
+   delta_neutrino4 =  calc.Calculate(4) - gen_neutrino_pz;
+   delta_neutrino5 =  calc.Calculate(5) - gen_neutrino_pz;
+   delta_neutrino6 =  calc.Calculate(6) - gen_neutrino_pz;
+   delta_neutrino7 =  calc.Calculate(7) - gen_neutrino_pz;
+   delta_neutrino8 =  calc.Calculate(8) - gen_neutrino_pz;
 
 #ifdef ANGLE_TESTING  
-  //INTERMEDIATE STEPS
-  // 
-  // MARKER: INTERMEDIATE
-  //   _       _                               _ _       _       
-  //  (_)_ __ | |_ ___ _ __ _ __ ___   ___  __| (_) __ _| |_ ___ 
-  //  | | '_ \| __/ _ \ '__| '_ ` _ \ / _ \/ _` | |/ _` | __/ _ \ |
-  //  | | | | | ||  __/ |  | | | | | |  __/ (_| | | (_| | ||  __/
-  //  |_|_| |_|\__\___|_|  |_| |_| |_|\___|\__,_|_|\__,_|\__\___|
-  //
+   //INTERMEDIATE STEPS
+   // 
+   // MARKER: INTERMEDIATE
+   //   _       _                               _ _       _       
+   //  (_)_ __ | |_ ___ _ __ _ __ ___   ___  __| (_) __ _| |_ ___ 
+   //  | | '_ \| __/ _ \ '__| '_ ` _ \ / _ \/ _` | |/ _` | __/ _ \ |
+   //  | | | | | ||  __/ |  | | | | | |  __/ (_| | | (_| | ||  __/
+   //  |_|_| |_|\__\___|_|  |_| |_| |_|\___|\__,_|_|\__,_|\__\___|
+   //
     
  
-  if (Wboson_lep.charge > 0.0) intermediate_steps(lepton, met4vector, jet0, jet1, imaginary_neutrino, d_leptons_in_lep_px, d_leptons_in_lep_py, d_leptons_in_lep_pz, d_partons_in_lep_px, d_partons_in_lep_py, d_partons_in_lep_pz, d_parton1_in_lep_px, d_parton2_in_lep_px, d_parton1_in_lep_py, d_parton2_in_lep_py, d_parton1_in_lep_pz, d_parton2_in_lep_pz, d_lepton1_in_lep_px, d_lepton1_in_lep_py, d_lepton1_in_lep_pz, d_lepton1_dotted_x, d_lepton1_dotted_y, d_lepton1_dotted_z, d_leptons_in_had_px, d_leptons_in_had_py, d_leptons_in_had_pz, d_lepton1_in_had_px, d_lepton1_in_had_py, d_lepton1_in_had_pz, d_lepton2_in_had_px, d_lepton2_in_had_py, d_lepton2_in_had_pz, d_parton1_in_had_px, d_parton1_in_had_py, d_parton1_in_had_pz, d_parton1_dotted_x, d_parton1_dotted_y, d_parton1_dotted_z, d_complicated1_px, d_complicated1_py, d_complicated1_pz, d_complicated2_px, d_complicated2_py, d_complicated2_pz, d_lepton_sumWWframe_X, d_lepton_sumWWframe_Y, d_lepton_sumWWframe_Z, d_lepton1WWframe_X, d_lepton1WWframe_Y, d_lepton1WWframe_Z, d_parton_sumWWframe_X, d_parton_sumWWframe_Y, d_parton_sumWWframe_Z, d_parton1WWframe_X, d_parton1WWframe_Y, d_parton1WWframe_Z, d_costhetastar, d_costheta1, d_phi, d_costheta2, d_phi1, d_phi2, d_boostWWframe_X, d_boostWWframe_Y, d_boostWWframe_Z, d_boostWlep_X, d_boostWlep_Y, d_boostWlep_Z, d_boostWhad_X, d_boostWhad_Y, d_boostWhad_Z, d_xdotx, d_xdoty, d_xdotz, d_ydotx, d_ydoty, d_ydotz, d_zdotx, d_zdoty, d_zdotz, d_lepton1WWframe_UX, d_lepton1WWframe_UY, d_lepton1WWframe_UZ, d_lepton_sumWWframe_UX, d_lepton_sumWWframe_UY, d_lepton_sumWWframe_UZ, d_leptons_in_lep_px_good, d_leptons_in_lep_py_good, d_leptons_in_lep_pz_good, d_partons_in_lep_px_good, d_partons_in_lep_py_good, d_partons_in_lep_pz_good, d_parton1_in_lep_px_good, d_parton2_in_lep_px_good, d_parton1_in_lep_py_good, d_parton2_in_lep_py_good, d_parton1_in_lep_pz_good, d_parton2_in_lep_pz_good, d_lepton1_in_lep_px_good, d_lepton1_in_lep_py_good, d_lepton1_in_lep_pz_good, d_leptons_in_had_px_good, d_leptons_in_had_py_good, d_leptons_in_had_pz_good, d_lepton1_in_had_px_good, d_lepton1_in_had_py_good, d_lepton1_in_had_pz_good, d_lepton2_in_had_px_good, d_lepton2_in_had_py_good, d_lepton2_in_had_pz_good, d_parton1_in_had_px_good, d_parton1_in_had_py_good, d_parton1_in_had_pz_good, d_lepton_sumWWframe_X_good, d_lepton_sumWWframe_Y_good, d_lepton_sumWWframe_Z_good, d_lepton1WWframe_X_good, d_lepton1WWframe_Y_good, d_lepton1WWframe_Z_good, d_parton_sumWWframe_X_good, d_parton_sumWWframe_Y_good, d_parton_sumWWframe_Z_good, d_parton1WWframe_X_good, d_parton1WWframe_Y_good, d_parton1WWframe_Z_good);
+   if (Wboson_lep.charge > 0.0) intermediate_steps(lepton, met4vector, jet0, jet1, imaginary_neutrino, d_leptons_in_lep_px, d_leptons_in_lep_py, d_leptons_in_lep_pz, d_partons_in_lep_px, d_partons_in_lep_py, d_partons_in_lep_pz, d_parton1_in_lep_px, d_parton2_in_lep_px, d_parton1_in_lep_py, d_parton2_in_lep_py, d_parton1_in_lep_pz, d_parton2_in_lep_pz, d_lepton1_in_lep_px, d_lepton1_in_lep_py, d_lepton1_in_lep_pz, d_lepton1_dotted_x, d_lepton1_dotted_y, d_lepton1_dotted_z, d_leptons_in_had_px, d_leptons_in_had_py, d_leptons_in_had_pz, d_lepton1_in_had_px, d_lepton1_in_had_py, d_lepton1_in_had_pz, d_lepton2_in_had_px, d_lepton2_in_had_py, d_lepton2_in_had_pz, d_parton1_in_had_px, d_parton1_in_had_py, d_parton1_in_had_pz, d_parton1_dotted_x, d_parton1_dotted_y, d_parton1_dotted_z, d_complicated1_px, d_complicated1_py, d_complicated1_pz, d_complicated2_px, d_complicated2_py, d_complicated2_pz, d_lepton_sumWWframe_X, d_lepton_sumWWframe_Y, d_lepton_sumWWframe_Z, d_lepton1WWframe_X, d_lepton1WWframe_Y, d_lepton1WWframe_Z, d_parton_sumWWframe_X, d_parton_sumWWframe_Y, d_parton_sumWWframe_Z, d_parton1WWframe_X, d_parton1WWframe_Y, d_parton1WWframe_Z, d_costhetastar, d_costheta1, d_phi, d_costheta2, d_phi1, d_phi2, d_boostWWframe_X, d_boostWWframe_Y, d_boostWWframe_Z, d_boostWlep_X, d_boostWlep_Y, d_boostWlep_Z, d_boostWhad_X, d_boostWhad_Y, d_boostWhad_Z, d_xdotx, d_xdoty, d_xdotz, d_ydotx, d_ydoty, d_ydotz, d_zdotx, d_zdoty, d_zdotz, d_lepton1WWframe_UX, d_lepton1WWframe_UY, d_lepton1WWframe_UZ, d_lepton_sumWWframe_UX, d_lepton_sumWWframe_UY, d_lepton_sumWWframe_UZ, d_leptons_in_lep_px_good, d_leptons_in_lep_py_good, d_leptons_in_lep_pz_good, d_partons_in_lep_px_good, d_partons_in_lep_py_good, d_partons_in_lep_pz_good, d_parton1_in_lep_px_good, d_parton2_in_lep_px_good, d_parton1_in_lep_py_good, d_parton2_in_lep_py_good, d_parton1_in_lep_pz_good, d_parton2_in_lep_pz_good, d_lepton1_in_lep_px_good, d_lepton1_in_lep_py_good, d_lepton1_in_lep_pz_good, d_leptons_in_had_px_good, d_leptons_in_had_py_good, d_leptons_in_had_pz_good, d_lepton1_in_had_px_good, d_lepton1_in_had_py_good, d_lepton1_in_had_pz_good, d_lepton2_in_had_px_good, d_lepton2_in_had_py_good, d_lepton2_in_had_pz_good, d_parton1_in_had_px_good, d_parton1_in_had_py_good, d_parton1_in_had_pz_good, d_lepton_sumWWframe_X_good, d_lepton_sumWWframe_Y_good, d_lepton_sumWWframe_Z_good, d_lepton1WWframe_X_good, d_lepton1WWframe_Y_good, d_lepton1WWframe_Z_good, d_parton_sumWWframe_X_good, d_parton_sumWWframe_Y_good, d_parton_sumWWframe_Z_good, d_parton1WWframe_X_good, d_parton1WWframe_Y_good, d_parton1WWframe_Z_good);
       
    if (Wboson_lep.charge < 0.0) intermediate_steps(met4vector, lepton, jet0, jet1, imaginary_neutrino, d_leptons_in_lep_px, d_leptons_in_lep_py, d_leptons_in_lep_pz, d_partons_in_lep_px, d_partons_in_lep_py, d_partons_in_lep_pz, d_parton1_in_lep_px, d_parton2_in_lep_px, d_parton1_in_lep_py, d_parton2_in_lep_py, d_parton1_in_lep_pz, d_parton2_in_lep_pz, d_lepton1_in_lep_px, d_lepton1_in_lep_py, d_lepton1_in_lep_pz, d_lepton1_dotted_x, d_lepton1_dotted_y, d_lepton1_dotted_z, d_leptons_in_had_px, d_leptons_in_had_py, d_leptons_in_had_pz, d_lepton1_in_had_px, d_lepton1_in_had_py, d_lepton1_in_had_pz, d_lepton2_in_had_px, d_lepton2_in_had_py, d_lepton2_in_had_pz, d_parton1_in_had_px, d_parton1_in_had_py, d_parton1_in_had_pz, d_parton1_dotted_x, d_parton1_dotted_y, d_parton1_dotted_z, d_complicated1_px, d_complicated1_py, d_complicated1_pz, d_complicated2_px, d_complicated2_py, d_complicated2_pz, d_lepton_sumWWframe_X, d_lepton_sumWWframe_Y, d_lepton_sumWWframe_Z, d_lepton1WWframe_X, d_lepton1WWframe_Y, d_lepton1WWframe_Z, d_parton_sumWWframe_X, d_parton_sumWWframe_Y, d_parton_sumWWframe_Z, d_parton1WWframe_X, d_parton1WWframe_Y, d_parton1WWframe_Z, d_costhetastar, d_costheta1, d_phi, d_costheta2, d_phi1, d_phi2, d_boostWWframe_X, d_boostWWframe_Y, d_boostWWframe_Z, d_boostWlep_X, d_boostWlep_Y, d_boostWlep_Z, d_boostWhad_X, d_boostWhad_Y, d_boostWhad_Z, d_xdotx, d_xdoty, d_xdotz, d_ydotx, d_ydoty, d_ydotz, d_zdotx, d_zdoty, d_zdotz, d_lepton1WWframe_UX, d_lepton1WWframe_UY, d_lepton1WWframe_UZ, d_lepton_sumWWframe_UX, d_lepton_sumWWframe_UY, d_lepton_sumWWframe_UZ, d_leptons_in_lep_px_good, d_leptons_in_lep_py_good, d_leptons_in_lep_pz_good, d_partons_in_lep_px_good, d_partons_in_lep_py_good, d_partons_in_lep_pz_good, d_parton1_in_lep_px_good, d_parton2_in_lep_px_good, d_parton1_in_lep_py_good, d_parton2_in_lep_py_good, d_parton1_in_lep_pz_good, d_parton2_in_lep_pz_good, d_lepton1_in_lep_px_good, d_lepton1_in_lep_py_good, d_lepton1_in_lep_pz_good, d_leptons_in_had_px_good, d_leptons_in_had_py_good, d_leptons_in_had_pz_good, d_lepton1_in_had_px_good, d_lepton1_in_had_py_good, d_lepton1_in_had_pz_good, d_lepton2_in_had_px_good, d_lepton2_in_had_py_good, d_lepton2_in_had_pz_good, d_parton1_in_had_px_good, d_parton1_in_had_py_good, d_parton1_in_had_pz_good, d_lepton_sumWWframe_X_good, d_lepton_sumWWframe_Y_good, d_lepton_sumWWframe_Z_good, d_lepton1WWframe_X_good, d_lepton1WWframe_Y_good, d_lepton1WWframe_Z_good, d_parton_sumWWframe_X_good, d_parton_sumWWframe_Y_good, d_parton_sumWWframe_Z_good, d_parton1WWframe_X_good, d_parton1WWframe_Y_good, d_parton1WWframe_Z_good);
     
@@ -2744,31 +2798,24 @@ TreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  if(isSignal)
-  {
-	if(aTGCWeights.size() >= weights_number) outTree_->Fill();
-  }
-  else
-  {
-	outTree_->Fill();
-  }
+   if(isSignal) {if(aTGCWeights.size() >= weights_number) outTree_->Fill();}
+   
+   else{outTree_->Fill();}
 
 }
 
 
-float TreeMaker::getPUPPIweight(float puppipt, float puppieta){
+float TreeMaker::getPUPPIweight(float puppipt, float puppieta)
+{
 
   float genCorr  = 1.;
   float recoCorr = 1.;
   float totalWeight = 1.;
         
   genCorr =  puppisd_corrGEN->Eval( puppipt );
-  if( fabs(puppieta)  <= 1.3 ){
-    recoCorr = puppisd_corrRECO_cen->Eval( puppipt );
-  }
-  else{
-    recoCorr = puppisd_corrRECO_for->Eval( puppipt );
-  }
+  if( fabs(puppieta)  <= 1.3 ) {recoCorr = puppisd_corrRECO_cen->Eval( puppipt );}
+  
+  else {recoCorr = puppisd_corrRECO_for->Eval( puppipt );}
 
   if(isMC) totalWeight= genCorr * recoCorr;
   else totalWeight= recoCorr;
@@ -2793,39 +2840,42 @@ float TreeMaker::getSmearingFactor(float sf, float unc, float resolution, const 
   // drMax is the maximum dR to count as a match with a genJet
   // relResMax is the maximum relative reoslution to count as a match
   // usePuppiPt is a bool to control whether to use Puppi Pt or normal pt for the reco jet
-  if (!(variation==0 || abs(variation)==1)) {
-    throw std::runtime_error("variation must be 0 (nominal) or +/-1");
-  }
+  if (!(variation==0 || abs(variation)==1)){throw std::runtime_error("variation must be 0 (nominal) or +/-1");}
 
   float jet_pt = usePuppiPt ? jet.userFloat("ak8PFJetsPuppiValueMap:pt") : jet.pt();
 
   // First find if there's a match
   float ptGen = -1.;
   float dRBest = 9999;
-  for (const auto & itr: genJets) {
-    float dR = deltaR(jet, itr);
-    float relRes = fabs(jet_pt - itr.pt())/jet_pt;
-    if (dR < drMax && relRes < relResMax && dR < dRBest) {
-      dRBest = dR;
-      ptGen = itr.pt();
+  for (const auto & itr: genJets)
+    {
+      float dR = deltaR(jet, itr);
+      float relRes = fabs(jet_pt - itr.pt())/jet_pt;
+      if (dR < drMax && relRes < relResMax && dR < dRBest)
+	{
+	  dRBest = dR;
+	  ptGen = itr.pt();
+	}
     }
-  }
   // Now calc factor
   float this_sf = sf + (variation * unc);
-  if (ptGen >= 0) {
-    // scaling method
-    // std::cout << "match" << std::endl;
-    // std::cout << jet.pt() << " : " << jet.eta() << " : " << jet.phi() << std::endl;
-    // std::cout << ptGen << " : " << etaGen << " : " << phiGen << std::endl;
-    return 1 + ((this_sf-1)*(1-(ptGen/jet_pt)));
-  } else {
-    // std::cout << "no match" << std::endl;
-    // stochastic method
-    // initialise seed with reproducible number
-    TRandom rand((int)(1000*jet.eta()));
-    float random_gauss = rand.Gaus(0, resolution);
-    return 1 + random_gauss * (sqrt(std::max((this_sf*this_sf) - 1, 0.0f)));
-  }
+  if (ptGen >= 0)
+    {
+      // scaling method
+      // std::cout << "match" << std::endl;
+      // std::cout << jet.pt() << " : " << jet.eta() << " : " << jet.phi() << std::endl;
+      // std::cout << ptGen << " : " << etaGen << " : " << phiGen << std::endl;
+      return 1 + ((this_sf-1)*(1-(ptGen/jet_pt)));
+    }
+  else
+    {
+      // std::cout << "no match" << std::endl;
+      // stochastic method
+      // initialise seed with reproducible number
+      TRandom rand((int)(1000*jet.eta()));
+      float random_gauss = rand.Gaus(0, resolution);
+      return 1 + random_gauss * (sqrt(std::max((this_sf*this_sf) - 1, 0.0f)));
+    }
 }
 
 void TreeMaker::saveDibosonMass(const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > & leptonicV_p4, const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > & hadronicV_p4, double & massVar)
@@ -2849,20 +2899,20 @@ void TreeMaker::saveDibosonMass(math::XYZTLorentzVector & leptonicV_p4, math::XY
 
 bool TreeMaker::decaysHadronic(const reco::Candidate* p)
 {
-   if(p!=NULL)
-   {	
-	//cout<<p->pdgId()<<" ";
-	if(abs(p->pdgId())<7 || abs(p->pdgId())==21) return true;
-	else
+  if(p!=NULL)
+    {	
+      //cout<<p->pdgId()<<" ";
+      if(abs(p->pdgId())<7 || abs(p->pdgId())==21) return true;
+      else
 	{
-		for(size_t i=0; i<p->numberOfDaughters(); ++i)
-		{
-		      	const reco::Candidate* d= (reco::Candidate*)p->daughter(i);
-	               	if(decaysHadronic(d)) return true;
-		}
+	  for(size_t i=0; i<p->numberOfDaughters(); ++i)
+	    {
+	      const reco::Candidate* d= (reco::Candidate*)p->daughter(i);
+	      if(decaysHadronic(d)) return true;
+	    }
 	}
-   }
-   return false;	
+    }
+  return false;	
 }
 
 void TreeMaker::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup){
@@ -2888,9 +2938,7 @@ TreeMaker::beginJob()
 
 // ------------ method called once each job just after ending the event loop  ------------
 void
-TreeMaker::endJob() {
-  std::cout << "TreeMaker endJob()..." << std::endl;
-}
+TreeMaker::endJob() {std::cout << "TreeMaker endJob()..." << std::endl;}
 
 
 void calculateAngles(TLorentzVector thep4M11, TLorentzVector thep4M12, TLorentzVector thep4M21, TLorentzVector thep4M22, Double_t& costheta1, Double_t& costheta2, Double_t& phi, Double_t& costhetastar, Double_t& phi1, Double_t& phi2)
