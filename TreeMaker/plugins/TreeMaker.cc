@@ -2216,15 +2216,9 @@ TreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    for (const auto & itr : *AK4Jets)
      {
        //taken from: https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80X#Supported_Algorithms_and_Operati
-       if((itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags")) > bTagDiscrCut){
-	 nbtag ++;
-       }
-       if((itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags")) > bTagDiscrCutMedium){
-	 nbtagMedium ++;
-       }
-       if((itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags")) > bTagDiscrCutLoose){
-	 nbtagLoose ++;
-       }
+       if((itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags")) > bTagDiscrCut){nbtag ++;}
+       if((itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags")) > bTagDiscrCutMedium){nbtagMedium ++;}
+       if((itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags")) > bTagDiscrCutLoose){nbtagLoose ++;}
        // std::cout << "Nominal " << itr.pt() << " : " << itr.eta() << " : " << itr.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") << std::endl;
        if(isMC) jetFlavours.push_back(itr.partonFlavour());
      }
@@ -2824,7 +2818,8 @@ float TreeMaker::getPUPPIweight(float puppipt, float puppieta)
 }
 
 
-float TreeMaker::getSmearingFactor(float sf, float unc, float resolution, const pat::Jet & jet, const edm::View<reco::GenJet> & genJets, int variation, float drMax, float relResMax, bool usePuppiPt) {
+float TreeMaker::getSmearingFactor(float sf, float unc, float resolution, const pat::Jet & jet, const edm::View<reco::GenJet> & genJets, int variation, float drMax, float relResMax, bool usePuppiPt)
+{
   // Calculate smearing factor using hybrid method
   // https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution
   // i.e. rescale if match with gen-level object,
@@ -2937,8 +2932,7 @@ TreeMaker::beginJob()
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
-void
-TreeMaker::endJob() {std::cout << "TreeMaker endJob()..." << std::endl;}
+void TreeMaker::endJob() {std::cout << "TreeMaker endJob()..." << std::endl;}
 
 
 void calculateAngles(TLorentzVector thep4M11, TLorentzVector thep4M12, TLorentzVector thep4M21, TLorentzVector thep4M22, Double_t& costheta1, Double_t& costheta2, Double_t& phi, Double_t& costhetastar, Double_t& phi1, Double_t& phi2)
